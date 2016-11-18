@@ -4,7 +4,7 @@
   :license {:name "GNU General Public License 3.0"
             :url "http://www.gnu.org/licenses/gpl-3.0.txt"
             :distribution :repo}
-  :dependencies [[org.clojure/clojure "1.8.0"]]
+  :dependencies [[org.clojure/clojure "1.8.0"]
+                 [prismatic/schema "1.1.3"]]
   :source-paths ["src/clj" "src/cljc"]
-  :test-paths ["test/clj" "test/cljc"]
-  )
+  :test-paths ["test/clj" "test/cljc"])
