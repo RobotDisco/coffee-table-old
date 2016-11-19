@@ -14,6 +14,18 @@
                :beverage-ordered "Espresso"
                :beverage-rating 5
                :date (java.util.Date.)}
-        new-id (bsd/add-visit db visit)
+        _ (bsd/add-visit db visit)
         new-visits (bsd/visits db)]
     (is (some #{visit} new-visits))))
+
+(deftest remove-visit-test
+  (let [system (component/start test-system)
+        db (:db system)
+        visit {:name "Test Cafe"
+               :beverage-ordered "Espresso"
+               :beverage-rating 5
+               :date (java.util.Date.)}
+        new-id (bsd/add-visit db visit)
+        _ (bsd/delete-visit db new-id)
+        new-visits (bsd/visits db)]
+    (is (not (some #{visit} new-visits)))))

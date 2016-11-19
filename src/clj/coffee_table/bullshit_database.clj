@@ -25,4 +25,10 @@
   [component
    visit :- m/Visit]
   (swap! (visits-atom component) conj visit)
-  (count (visits component)))
+  (dec (count (visits component))))
+
+(defn delete-visit :- s/Bool
+  [component
+   visit-id :- s/Int]
+  (swap! (visits-atom component) #(concat (subvec % 0 visit-id) (subvec % (inc visit-id))))
+  true)
