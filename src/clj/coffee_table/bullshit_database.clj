@@ -32,3 +32,9 @@
    visit-id :- s/Int]
   (swap! (visits-atom component) #(concat (subvec % 0 visit-id) (subvec % (inc visit-id))))
   true)
+
+(defn update-visit
+  [component
+   idx :- s/Int
+   visit :- m/Visit]
+  (swap! (visits-atom component) assoc idx visit))
