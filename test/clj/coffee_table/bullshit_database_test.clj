@@ -11,7 +11,9 @@
   (let [system (component/start test-system)
         db (:db system)
         visit {:name "Test Cafe"
-               :beverage-rating 5}
+               :beverage-ordered "Espresso"
+               :beverage-rating 5
+               :date (java.util.Date.)}
         new-id (bsd/add-visit db visit)
         new-visits (bsd/visits db)]
     (is (some #{visit} new-visits))))

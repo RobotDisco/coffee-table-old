@@ -1,5 +1,7 @@
 (ns coffee-table.bullshit-database
-  (:require [com.stuartsierra.component :as component]))
+  (:require [com.stuartsierra.component :as component]
+            [schema.core :as s :refer [defn]]
+            [coffee-table.model :as m]))
 
 (defrecord BullshitDatabase []
   component/Lifecycle
@@ -8,15 +10,19 @@
   (stop [this]
     (assoc this :visits nil)))
 
-(defn bullshit-database []
+(defn bullshit-database
+  []
   (map->BullshitDatabase {}))
 
-(defn visits [component]
+(defn visits :- [m/Visit]
+  [component]
   @(:visits component))
 
-(defn visits-atom [component]
+(defn- visits-atom [component]
   (:visits component))
 
-(defn add-visit [component visit]
+(defn add-visit :- s/Int
+  [component
+   visit :- m/Visit]
   (swap! (visits-atom component) conj visit)
   (count (visits component)))
