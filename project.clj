@@ -5,6 +5,7 @@
             :url "http://www.gnu.org/licenses/gpl-3.0.txt"
             :distribution :repo}
   :dependencies [[org.clojure/clojure "1.8.0"]
-                 [prismatic/schema "1.1.3"]]
+                 [prismatic/schema "1.1.3"]
+                 [com.stuartsierra/component "0.3.1"]]
   :source-paths ["src/clj" "src/cljc"]
   :test-paths ["test/clj" "test/cljc"])
