@@ -14,9 +14,23 @@
                :beverage-ordered "Espresso"
                :beverage-rating 5
                :date (java.util.Date.)}
+        old-count (count (bsd/visits db))
         _ (bsd/add-visit db visit)
+        new-count (count (bsd/visits db))
         new-visits (bsd/visits db)]
-    (is (some #{visit} new-visits))))
+    (is (some #{visit} new-visits))
+    (is (= new-count (inc old-count)))))
+
+(deftest add-visit-twice-test
+  (let [system (component/start test-system)
+        db (:db system)
+        visit {:name "Test Cafe"
+               :beverage-ordered "Espresso"
+               :beverage-rating 5
+               :date (java.util.Date.)}
+        first-count (bsd/add-visit db visit)
+        second-count (bsd/add-visit db visit)]
+    (is (= second-count (inc first-count)))))
 
 (deftest remove-visit-test
   (let [system (component/start test-system)
