@@ -3,6 +3,12 @@
             [schema.core :as s :refer [defn]]
             [coffee-table.model :as m]))
 
+(def DBVisit
+  (s/conditional #(contains? % :id) m/Visit))
+
+(def DBVisitResult
+  (s/maybe DBVisit))
+
 (defrecord BullshitDatabase []
   component/Lifecycle
   (start [this]
@@ -14,18 +20,25 @@
   []
   (map->BullshitDatabase {}))
 
-(defn visits :- [m/Visit]
+(defn visits :- [DBVisit]
   [component]
   @(:visits component))
+
+(defn visit :- DBVisitResult
+  [component
+   id :- s/Int]
+  (nth (visits component) id nil))
 
 (defn- visits-atom [component]
   (:visits component))
 
-(defn add-visit :- s/Int
+(defn add-visit :- DBVisit
   [component
    visit :- m/Visit]
-  (swap! (visits-atom component) conj visit)
-  (dec (count (visits component))))
+  (let [db-visits (visits component)
+        db-visit (assoc visit :id (count db-visits))
+        _ (swap! (visits-atom component) conj db-visit)]
+    db-visit))
 
 (defn delete-visit :- s/Bool
   [component
@@ -33,8 +46,12 @@
   (swap! (visits-atom component) #(concat (subvec % 0 visit-id) (subvec % (inc visit-id))))
   true)
 
-(defn update-visit
+(defn update-visit :- DBVisitResult
   [component
-   idx :- s/Int
-   visit :- m/Visit]
-  (swap! (visits-atom component) assoc idx visit))
+   visit :- DBVisit]
+  (let [update-idx (m/visit-id visit)
+        num-visits (count (visits component))]
+    (when (< update-idx num-visits)
+      (do
+        (swap! (visits-atom component) assoc update-idx visit)
+        visit))))
