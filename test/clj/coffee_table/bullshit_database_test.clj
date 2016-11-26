@@ -83,3 +83,21 @@
         pending-visit (update new-visit :id inc)
         updated-visit (bsd/update-visit db pending-visit)]
     (is (nil? updated-visit))))
+
+(deftest get-existing-visit
+  (let [system (component/start test-system)
+        db (:db system)
+        visit {:name "Test Cafe"
+               :beverage-ordered "Espresso"
+               :beverage-rating 5
+               :date (java.util.Date.)}
+        new-visit (bsd/add-visit db visit)
+        fetched-visit (bsd/visit db (m/visit-id new-visit))]
+    (is (= fetched-visit new-visit))))
+
+(deftest get-nonexisting-visit
+  (let [system (component/start test-system)
+        db (:db system)
+        visits-count (count (bsd/visits db))
+        fetched-visit (bsd/visit db (inc visits-count))]
+    (is (= fetched-visit nil))))
