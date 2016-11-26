@@ -20,7 +20,7 @@
   []
   (map->BullshitDatabase {}))
 
-(defn visits :- [DBVisit]
+(defn visits :- [(s/maybe DBVisit)]
   [component]
   @(:visits component))
 
@@ -43,7 +43,7 @@
 (defn delete-visit :- s/Bool
   [component
    visit-id :- s/Int]
-  (swap! (visits-atom component) #(concat (subvec % 0 visit-id) (subvec % (inc visit-id))))
+  (swap! (visits-atom component) assoc visit-id nil)
   true)
 
 (defn update-visit :- DBVisitResult
