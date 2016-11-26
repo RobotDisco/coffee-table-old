@@ -40,10 +40,12 @@
                :beverage-ordered "Espresso"
                :beverage-rating 5
                :date (java.util.Date.)}
+        old-count (count (bsd/visits db))
         new-visit (bsd/add-visit db visit)
         _ (bsd/delete-visit db (m/visit-id new-visit))
         new-visits (bsd/visits db)]
-    (is (not (some #{new-visit} new-visits)))))
+    (is (not (some #{new-visit} new-visits)))
+    (is (= old-count (dec (count new-visits))))))
 
 (deftest remove-visit-twice-test
   (let [system (component/start test-system)
@@ -53,10 +55,12 @@
                :beverage-rating 5
                :date (java.util.Date.)}
         new-visit (bsd/add-visit db visit)
+        old-visits (bsd/visits db)
         _ (bsd/delete-visit db (m/visit-id new-visit))
         _ (bsd/delete-visit db (m/visit-id new-visit))
         new-visits (bsd/visits db)]
-    (is (not (some #{new-visit} new-visits)))))
+    (is (not (some #{new-visit} new-visits)))
+    (is (= (count old-visits) (count new-visits)))))
 
 (deftest update-visit-test
   (let [system (component/start test-system)
