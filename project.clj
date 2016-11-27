@@ -6,6 +6,9 @@
             :distribution :repo}
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [prismatic/schema "1.1.3"]
-                 [com.stuartsierra/component "0.3.1"]]
+                 [com.stuartsierra/component "0.3.1"]
+                 [aleph "0.4.1"]
+                 [yada "1.1.44"]
+                 [ring/ring-mock "0.3.0"]]
   :source-paths ["src/clj" "src/cljc"]
   :test-paths ["test/clj" "test/cljc"])
