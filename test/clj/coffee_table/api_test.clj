@@ -1,13 +1,19 @@
 (ns coffee-table.api-test
   (:require  [clojure.test :refer :all]
-             [ring.mock.request :as mock]))
+             [ring.mock.request :as mock]
+             [yada.yada :as yada]))
 
 (deftest visits-api
   (testing "GET /visits"
-    (let [response (mock/request :get "/visits")]))
-  (testing "PUT /visits"
-    (let [response (mock/request :put "/visits")]))
-  (testing "POST /visits"
-    (let [response (mock/request :post "/visits")]))
-  (testing "DELETE /visits"
-    (let [response (mock/request :delete "/visits")])))
+    (let [handler (yada/handler "Totally fake handler")
+          response @(handler (mock/request :get "/visits"))]
+      (is (= 200 (:status response)))))
+  #_ (testing "PUT /visits"
+    (let [response @((yada/handler "/") (mock/request :put "/visits"))]
+      (is (= 201 (:status response)))))
+  #_ (testing "POST /visits"
+    (let [response @((yada/handler "/") (mock/request :post "/visits"))]
+      (is (= 204 (:status response)))))
+  #_ (testing "DELETE /visits"
+    (let [response @((yada/handler "/") (mock/request :delete "/visits"))]
+      (is (= 204 (:status response))))))
