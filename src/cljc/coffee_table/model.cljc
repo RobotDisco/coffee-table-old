@@ -1,5 +1,5 @@
 (ns coffee-table.model
-  (:require [schema.core :as s :refer [defn]]))
+  (:require [schema.core :as s]))
 
 (def Rating
   "Numeric score for various visit factors"
@@ -31,7 +31,7 @@
    (s/optional-key :ambience-notes) s/Str
    (s/optional-key :other-notes) s/Str})
 
-(defn visit-id [visit :- Visit] :- s/Int
+(s/defn visit-id [visit :- Visit] :- s/Int
   (:id visit))
 
 (def Summary

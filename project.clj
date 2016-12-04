@@ -10,5 +10,7 @@
                  [aleph "0.4.1"]
                  [yada "1.1.44"]
                  [ring/ring-mock "0.3.0"]]
+  :profiles {:dev {:dependencies [[reloaded.repl "0.2.3"]]}
+                   :source-paths ["dev"]}
   :source-paths ["src/clj" "src/cljc"]
   :test-paths ["test/clj" "test/cljc"])

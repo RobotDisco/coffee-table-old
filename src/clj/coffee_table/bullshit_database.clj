@@ -1,6 +1,6 @@
 (ns coffee-table.bullshit-database
   (:require [com.stuartsierra.component :as component]
-            [schema.core :as s :refer [defn]]
+            [schema.core :as s]
             [coffee-table.model :as m]))
 
 (def DBVisit
@@ -9,22 +9,22 @@
 (def DBVisitResult
   (s/maybe DBVisit))
 
-(defrecord BullshitDatabase []
+(s/defrecord BullshitDatabase []
   component/Lifecycle
   (start [this]
     (assoc this :visits (atom [])))
   (stop [this]
     (assoc this :visits nil)))
 
-(defn bullshit-database
+(s/defn new-bullshit-database
   []
   (map->BullshitDatabase {}))
 
-(defn visits :- [(s/maybe DBVisit)]
+(s/defn visits :- [(s/maybe DBVisit)]
   [component]
   @(:visits component))
 
-(defn visit :- DBVisitResult
+(s/defn visit :- DBVisitResult
   [component
    id :- s/Int]
   (nth (visits component) id nil))
@@ -32,7 +32,7 @@
 (defn- visits-atom [component]
   (:visits component))
 
-(defn add-visit :- DBVisit
+(s/defn add-visit :- DBVisit
   [component
    visit :- m/Visit]
   (let [db-visits (visits component)
@@ -40,13 +40,13 @@
         _ (swap! (visits-atom component) conj db-visit)]
     db-visit))
 
-(defn delete-visit :- s/Bool
+(s/defn delete-visit :- s/Bool
   [component
    visit-id :- s/Int]
   (swap! (visits-atom component) assoc visit-id nil)
   true)
 
-(defn update-visit :- DBVisitResult
+(s/defn update-visit :- DBVisitResult
   [component
    visit :- DBVisit]
   (let [update-idx (m/visit-id visit)
