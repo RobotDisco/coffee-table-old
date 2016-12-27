@@ -3,11 +3,11 @@
             [coffee-table.bullshit-database :as bsd]
             [coffee-table.web-server :as ws]))
 
-(defn dev-system []
+(def dev-system
   (component/system-map
    :db (bsd/new-bullshit-database)
    :web (ws/new-web-server)))
 
-(defn test-system []
+(def test-system
   (component/system-map
    :db (bsd/new-bullshit-database)))
