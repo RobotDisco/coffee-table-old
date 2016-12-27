@@ -4,7 +4,11 @@
              [yada.yada :as yada]))
 
 (deftest visits-api
-  (testing "GET /visits"
+  (testing "POST /visits (invalid data)"
+    (let [handler (yada/handler "Totally fake handler")
+          response @(handler (mock/request :post "/visits"))]
+      (is (= 400 (:status response)))))
+  #_ (testing "GET /visits"
     (let [handler (yada/handler "Totally fake handler")
           response @(handler (mock/request :get "/visits"))]
       (is (= 200 (:status response)))))
