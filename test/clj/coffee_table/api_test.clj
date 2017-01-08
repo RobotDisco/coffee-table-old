@@ -3,6 +3,7 @@
              [ring.mock.request :as mock]
              [yada.yada :as yada]
              [coffee-table.model :refer [Visit]]
+             [coffee-table.resources :refer [new-visit-resource]]
              [cheshire.core :refer [generate-string]]
              [byte-streams :as bs]))
 
@@ -13,19 +14,14 @@
 
 (deftest visits-api
   (testing "POST /visits (invalid data)"
-    (let [resource {:methods {:post {:parameters {:body Visit}
-                                     :response (java.net.URI. "/visits/1")}}
-                    :consumes #{"application/json"}}
+    (let [resource (new-visit-resource)
           handler (yada/handler (yada/resource resource))
           request (make-json-request (mock/request :post "/visits")
                                      {})
           response @(handler request)]
       (is (= 400 (-> response :status)))))
   (testing "POST /visits (valid data)"
-    (let [resource {:properties (fn [ctx] {:exists? false})
-                    :methods {:post {:parameters {:body Visit}
-                                     :response (java.net.URI. "/visits/1")}}
-                    :consumes #{"application/json"}}
+    (let [resource (new-visit-resource)
           handler (yada/handler (yada/resource resource))
           request (make-json-request (mock/request :post "/visits")
                                      {:name "Minumum Data"
