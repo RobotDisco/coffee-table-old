@@ -4,8 +4,10 @@
              [yada.yada :as yada]
              [coffee-table.model :refer [Visit]]
              [coffee-table.resources :refer [new-visit-resource]]
+             [coffee-table.system :refer [test-system]]
              [cheshire.core :refer [generate-string]]
-             [byte-streams :as bs]))
+             [byte-streams :as bs :refer [convert]]
+             [com.stuartsierra.component :as component]))
 
 (defn make-json-request [request body]
   (-> request
@@ -14,15 +16,15 @@
 
 (deftest visits-api
   (testing "POST /visits (invalid data)"
-    (let [resource (new-visit-resource)
-          handler (yada/handler (yada/resource resource))
+    (let [resource (new-visit-resource (:db (component/start test-system)))
+          handler (yada/handler resource)
           request (make-json-request (mock/request :post "/visits")
                                      {})
           response @(handler request)]
       (is (= 400 (-> response :status)))))
   (testing "POST /visits (valid data)"
-    (let [resource (new-visit-resource)
-          handler (yada/handler (yada/resource resource))
+    (let [resource (new-visit-resource (:db (component/start test-system)))
+          handler (yada/handler resource)
           request (make-json-request (mock/request :post "/visits")
                                      {:name "Minumum Data"
                                       :beverage-rating 5
