@@ -26,8 +26,10 @@
 
 (s/defn visit :- DBVisitResult
   [component
-   id :- s/Int]
-  (nth (visits component) id nil))
+   id :- (s/maybe s/Int)]
+  (if (nil? id)
+    nil
+    (nth (visits component) id nil)))
 
 (defn- visits-atom [component]
   (:visits component))

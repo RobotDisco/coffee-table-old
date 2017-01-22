@@ -9,7 +9,7 @@
 (use-fixtures :once schema.test/validate-schemas)
 
 (deftest add-visit-test
-  (let [system (component/start test-system)
+  (let [system (component/start (test-system))
         db (:db system)
         visit {:name "Test Cafe"
                :beverage-ordered "Espresso"
@@ -23,7 +23,7 @@
     (is (= new-count (inc old-count)))))
 
 (deftest add-visit-twice-test
-  (let [system (component/start test-system)
+  (let [system (component/start (test-system))
         db (:db system)
         visit {:name "Test Cafe"
                :beverage-ordered "Espresso"
@@ -34,7 +34,7 @@
     (is (= (m/visit-id visit2) (inc (m/visit-id visit1))))))
 
 (deftest remove-visit-test
-  (let [system (component/start test-system)
+  (let [system (component/start (test-system))
         db (:db system)
         visit {:name "Test Cafe"
                :beverage-ordered "Espresso"
@@ -48,7 +48,7 @@
     (is (= old-count (dec (count new-visits))))))
 
 (deftest remove-visit-twice-test
-  (let [system (component/start test-system)
+  (let [system (component/start (test-system))
         db (:db system)
         visit {:name "Test Cafe"
                :beverage-ordered "Espresso"
@@ -63,7 +63,7 @@
     (is (= (count old-visits) (count new-visits)))))
 
 (deftest update-visit-test
-  (let [system (component/start test-system)
+  (let [system (component/start (test-system))
         db (:db system)
         visit {:name "Test Cafe"
                :beverage-ordered "Espresso"
@@ -77,7 +77,7 @@
     (is (some #{updated-visit} new-visits))))
 
 (deftest update-visit-with-invalid-id-test
-  (let [system (component/start test-system)
+  (let [system (component/start (test-system))
         db (:db system)
         visit {:name "Test Cafe"
                :beverage-ordered "Espresso"
@@ -89,7 +89,7 @@
     (is (nil? updated-visit))))
 
 (deftest get-existing-visit
-  (let [system (component/start test-system)
+  (let [system (component/start (test-system))
         db (:db system)
         visit {:name "Test Cafe"
                :beverage-ordered "Espresso"
@@ -100,7 +100,7 @@
     (is (= fetched-visit new-visit))))
 
 (deftest get-nonexisting-visit
-  (let [system (component/start test-system)
+  (let [system (component/start (test-system))
         db (:db system)
         visits-count (count (bsd/visits db))
         fetched-visit (bsd/visit db (inc visits-count))]
