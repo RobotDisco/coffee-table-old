@@ -6,8 +6,13 @@
 (defn dev-system []
   (component/system-map
    :db (bsd/new-bullshit-database)
-   :web (ws/new-web-server)))
+   :web (component/using
+         (ws/new-web-server)
+         [:db])))
 
 (defn test-system []
   (component/system-map
-   :db (bsd/new-bullshit-database)))
+   :db (bsd/new-bullshit-database)
+   :web (component/using
+         (ws/new-mock-web-server)
+         [:db])))

@@ -2,22 +2,33 @@
   (:require [schema.core :as s]
             [yada.yada :as yada]
             [com.stuartsierra.component :as component]
-            ))
+            [coffee-table.resources :refer [new-visit-resource]]))
 
-(def routes
+(defn routes [db]
   "Create URI route structure for our application."
   [""
-   [true (yada/handler nil)]])
+   [["/visits" [["" (new-visit-resource db)]
+                [["/" :id] (new-visit-resource db)]]]
+    [true (yada/as-resource nil)]]])
 
-(s/defrecord WebServer []
+(s/defrecord WebServer [db]
   component/Lifecycle
   (start [component]
-    (let [listener (yada/listener routes {:port 8080})]
+    (let [app-routes (routes db)
+          listener (yada/listener app-routes {:port 8080})]
       (assoc component :listener listener)))
   (stop [component]
     (when-let [close (get-in component [:listener :close])]
       (close))
     (assoc component :listener nil)))
 
+(s/defrecord MockWebServer [db]
+  component/Lifecycle
+  (start [component]
+    (assoc component :routes (routes db))))
+
 (defn new-web-server []
   (map->WebServer {}))
+
+(defn new-mock-web-server []
+  (map->MockWebServer {}))
