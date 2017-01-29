@@ -32,7 +32,7 @@
           response @(handler request)]
       (is (= 201 (-> response :status)))
       (is (contains? (:headers response) "location"))))
-  (testing "GET /visits/<someid>"
+  (testing "GET /visits/<someid> (existing entry)"
     (let [new-visit {:name "Minimum Data"
                      :beverage-rating 5
                      :beverage-ordered "Cortado"
@@ -45,6 +45,11 @@
           get-request (mock/request :get location)
           get-response @(handler get-request)]
       (is (= (assoc new-visit :id 0) (update (parse-string (convert (:body get-response) String) true) :date clojure.instant/read-instant-date)))))
+  (testing "GET /visits/<someid> (nonexistant entity)"
+    (let [handler (make-handler (:routes (:web (component/start (test-system)))))
+          get-request (mock/request :get "/visits/0")
+          get-response @(handler get-request)]
+      (is (= 404 (:status get-response)))))
   #_ (testing "GET /visits"
     (let [handler (yada/handler "Totally fake handler")
           response @(handler (mock/request :get "/visits"))]
