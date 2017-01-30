@@ -50,10 +50,11 @@
           get-request (mock/request :get "/visits/0")
           get-response @(handler get-request)]
       (is (= 404 (:status get-response)))))
-  #_ (testing "GET /visits"
-    (let [handler (yada/handler "Totally fake handler")
+  (testing "GET /visits (no entries yet)"
+    (let [handler (make-handler (:routes (:web (component/start (test-system)))))
           response @(handler (mock/request :get "/visits"))]
-      (is (= 200 (:status response)))))
+      (is (= 200 (:status response)))
+      (is (= [] (parse-string (convert (:body response) String))))))
   #_ (testing "PUT /visits"
     (let [response @((yada/handler "/") (mock/request :put "/visits"))]
       (is (= 201 (:status response)))))

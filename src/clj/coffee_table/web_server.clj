@@ -2,13 +2,13 @@
   (:require [schema.core :as s]
             [yada.yada :as yada]
             [com.stuartsierra.component :as component]
-            [coffee-table.resources :refer [new-visit-resource]]))
+            [coffee-table.resources :refer [new-visit-node-resource new-visit-index-resource]]))
 
 (defn routes [db]
   "Create URI route structure for our application."
   [""
-   [["/visits" [["" (new-visit-resource db)]
-                [["/" :id] (new-visit-resource db)]]]
+   [["/visits" [["" (new-visit-index-resource db)]
+                [["/" :id] (new-visit-node-resource db)]]]
     [true (yada/as-resource nil)]]])
 
 (s/defrecord WebServer [db]
