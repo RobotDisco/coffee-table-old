@@ -25,7 +25,8 @@
 (s/defrecord MockWebServer [db]
   component/Lifecycle
   (start [component]
-    (assoc component :routes (routes db))))
+    (assoc component :routes (routes db)))
+  (stop [component]))
 
 (defn new-web-server []
   (map->WebServer {}))
