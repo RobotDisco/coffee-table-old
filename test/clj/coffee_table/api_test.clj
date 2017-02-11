@@ -7,7 +7,8 @@
              [coffee-table.system :refer [test-system]]
              [cheshire.core :refer [generate-string parse-string]]
              [byte-streams :as bs :refer [convert]]
-             [com.stuartsierra.component :as component]))
+             [com.stuartsierra.component :as component]
+             [schema.test]))
 
 (def system (atom nil))
 (def handler (atom nil))
@@ -20,6 +21,7 @@
   (component/stop @system))
 
 (use-fixtures :each with-test-system)
+(use-fixtures :once schema.test/validate-schemas)
 
 
 (def example-visit {:name "Minumum Data"
@@ -53,7 +55,7 @@
           location (get-in create-response [:headers "location"])
           get-request (mock/request :get location)
           get-response @(@handler get-request)]
-      (is (= (assoc example-visit :id 0) (update (parse-string (convert (:body get-response) String) true) :date clojure.instant/read-instant-date))))))
+      (is (= (assoc example-visit :id 0) (update (-> get-response :body bs/to-string (parse-string true)) :date clojure.instant/read-instant-date))))))
 
 (deftest get-visits-id-does-not-exist
   (testing "GET /visits/<someid> (nonexistant entity)"
@@ -65,7 +67,7 @@
   (testing "GET /visits (no entries yet)"
     (let [response @(@handler (mock/request :get "/visits"))]
       (is (= 200 (:status response)))
-      (is (= [] (parse-string (convert (:body response) String)))))))
+      (is (= [] (parse-string (bs/to-string (:body response))))))))
 
 (deftest list-visits-entries-exist
   (testing "Get /visits (a couple of entries)"
@@ -74,10 +76,16 @@
           list-request (mock/request :get "/visits")
           list-response @(@handler list-request)]
       (is (= 200 (:status list-response)))
-      (is (= numtimes (count (parse-string (convert (:body list-response) String))))))))
+      (is (= numtimes (count (parse-string (bs/to-string (:body list-response)))))))))
 
 (deftest update-visits-entry-exists)
-(deftest update-visits-entry-does-not-exist)
+(deftest update-visits-entry-does-not-exist
+  (testing "PUT /visits/<id> (<id> doesn't exist)"
+    (let [put-body (-> example-visit (assoc :id 0) (assoc :name "Updated Café"))
+          put-request (make-json-request (mock/request :put "/visits/0") put-body)
+          put-response @(@handler put-request)]
+      (is (= "Non-existant ID" (bs/to-string (:body put-response))))
+      (is (= 400 (:status put-response))))))
 (deftest update-visits-incomplete-data)
 (deftest delete-visits-id-exists)
 (deftest delete-visits-id-does-not-exist)

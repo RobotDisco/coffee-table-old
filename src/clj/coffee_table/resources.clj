@@ -23,10 +23,19 @@
    {:description "Café Visit entries"
     :consumes #{"application/json"}
     :produces #{"application/json"}
+    :parameters {:path {:id Long}}
     :properties (fn [ctx]
                   (let [id (get-in ctx [:parameters :path :id])]
                     {:exists? (not (nil? (dbc/visit db id)))}))
-    :methods {:get {:parameters {:path {:id Long}}
-                    :response (fn [ctx]
+    :methods {:get {:response (fn [ctx]
                                 (let [id (get-in ctx [:parameters :path :id])]
-                                  (dbc/visit db id)))}}}))
+                                  (dbc/visit db id)))}
+              :put {:parameters {:body Visit}
+                    :response (fn [ctx]
+                                (let [updated-visit (get-in ctx [:parameters :body])
+                                      res (dbc/update-visit db updated-visit)]
+                                  (if-not (nil? res)
+                                    nil
+                                    (-> ctx
+                                        (assoc-in [:response :status] 400)
+                                        (assoc-in [:response :body] "Non-existant ID")))))}}}))

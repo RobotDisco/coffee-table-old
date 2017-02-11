@@ -1,10 +1,11 @@
 (ns coffee-table.bullshit-database
   (:require [com.stuartsierra.component :as component]
             [schema.core :as s]
-            [coffee-table.model :as m]))
+            [coffee-table.model :as m :refer [Visit]]))
 
 (def DBVisit
-  (s/conditional #(contains? % :id) m/Visit))
+  "Schema for visit that came from a DB"
+  (s/conditional #(contains? % :id) Visit))
 
 (def DBVisitResult
   (s/maybe DBVisit))
@@ -36,7 +37,7 @@
 
 (s/defn add-visit :- DBVisit
   [component
-   visit :- m/Visit]
+   visit :- Visit]
   (let [db-visits (visits component)
         db-visit (assoc visit :id (count db-visits))
         _ (swap! (visits-atom component) conj db-visit)]
@@ -53,7 +54,8 @@
    visit :- DBVisit]
   (let [update-idx (m/visit-id visit)
         num-visits (count (visits component))]
-    (when (< update-idx num-visits)
+    (if (< update-idx num-visits)
       (do
         (swap! (visits-atom component) assoc update-idx visit)
-        visit))))
+        visit)
+      nil)))
