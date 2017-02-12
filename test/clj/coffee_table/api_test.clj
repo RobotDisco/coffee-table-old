@@ -78,14 +78,24 @@
       (is (= 200 (:status list-response)))
       (is (= numtimes (count (parse-string (bs/to-string (:body list-response)))))))))
 
-(deftest update-visits-entry-exists)
+(deftest update-visits-entry-exists
+  (testing "PUT /visits/<id> (<id> existed already)"
+    (let [create-request (make-json-request (mock/request :post "/visits") example-visit)
+          location (get-in @(@handler create-request) [:headers "location"])
+          put-body (assoc example-visit :name "Updated Café")
+          put-request (make-json-request (mock/request :put location) put-body)
+          _ (require 'coffee-table.bullshit-database)
+          butt (coffee-table.bullshit-database/update-visit (:db @system) 0 put-body)
+          put-response @(@handler put-request)]
+      (is (= 204 (:status put-response))))))
+
 (deftest update-visits-entry-does-not-exist
   (testing "PUT /visits/<id> (<id> doesn't exist)"
     (let [put-body (-> example-visit (assoc :id 0) (assoc :name "Updated Café"))
           put-request (make-json-request (mock/request :put "/visits/0") put-body)
           put-response @(@handler put-request)]
-      (is (= "Non-existant ID" (bs/to-string (:body put-response))))
-      (is (= 400 (:status put-response))))))
+      (is (= 404 (:status put-response))))))
+
 (deftest update-visits-incomplete-data)
 (deftest delete-visits-id-exists)
 (deftest delete-visits-id-does-not-exist)

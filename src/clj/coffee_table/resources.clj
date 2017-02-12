@@ -32,10 +32,9 @@
                                   (dbc/visit db id)))}
               :put {:parameters {:body Visit}
                     :response (fn [ctx]
-                                (let [updated-visit (get-in ctx [:parameters :body])
-                                      res (dbc/update-visit db updated-visit)]
+                                (let [id (get-in ctx [:parameters :path :id])
+                                      updated-visit (get-in ctx [:parameters :body])
+                                      res (dbc/update-visit db id updated-visit)]
                                   (if-not (nil? res)
                                     nil
-                                    (-> ctx
-                                        (assoc-in [:response :status] 400)
-                                        (assoc-in [:response :body] "Non-existant ID")))))}}}))
+                                    (assoc-in ctx [:response :status] 404))))}}}))

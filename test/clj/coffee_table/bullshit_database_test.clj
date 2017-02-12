@@ -71,7 +71,7 @@
                :date (java.util.Date.)}
         added-visit (bsd/add-visit db visit)
         updated-visit (assoc added-visit :name "Test Cafe1")
-        _ (bsd/update-visit db updated-visit)
+        _ (bsd/update-visit db (m/visit-id updated-visit) updated-visit)
         new-visits (bsd/visits db)]
     (is (not (some #{added-visit} new-visits)))
     (is (some #{updated-visit} new-visits))))
@@ -85,7 +85,7 @@
                :date (java.util.Date.)}
         new-visit (bsd/add-visit db visit)
         pending-visit (update new-visit :id inc)
-        updated-visit (bsd/update-visit db pending-visit)]
+        updated-visit (bsd/update-visit db (m/visit-id pending-visit) pending-visit)]
     (is (nil? updated-visit))))
 
 (deftest get-existing-visit

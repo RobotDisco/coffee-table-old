@@ -51,11 +51,10 @@
 
 (s/defn update-visit :- DBVisitResult
   [component
-   visit :- DBVisit]
-  (let [update-idx (m/visit-id visit)
-        num-visits (count (visits component))]
-    (if (< update-idx num-visits)
-      (do
-        (swap! (visits-atom component) assoc update-idx visit)
-        visit)
-      nil)))
+   update-idx :- s/Int
+   update-visit :- Visit]
+  (if (nil? (visit component update-idx))
+    nil
+    (do
+      (swap! (visits-atom component) assoc update-idx (assoc update-visit :id update-idx))
+      (visit component update-idx))))
