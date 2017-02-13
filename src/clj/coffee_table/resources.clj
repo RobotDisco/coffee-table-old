@@ -27,7 +27,10 @@
     :properties (fn [ctx]
                   (let [id (get-in ctx [:parameters :path :id])]
                     {:exists? (not (nil? (dbc/visit db id)))}))
-    :methods {:get {:response (fn [ctx]
+    :methods {:delete {:response (fn [ctx]
+                                   (let [id (get-in ctx [:parameters :path :id])]
+                                     (dbc/delete-visit db id)))}
+              :get {:response (fn [ctx]
                                 (let [id (get-in ctx [:parameters :path :id])]
                                   (dbc/visit db id)))}
               :put {:parameters {:body Visit}

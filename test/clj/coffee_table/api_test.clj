@@ -96,6 +96,27 @@
           put-response @(@handler put-request)]
       (is (= 404 (:status put-response))))))
 
-(deftest update-visits-incomplete-data)
-(deftest delete-visits-id-exists)
-(deftest delete-visits-id-does-not-exist)
+(deftest update-visits-incomplete-data
+  (testing "PUT /visits/<id> (<id> doesn't exist)"
+    (let [put-body (-> example-visit (dissoc :name))
+          put-request (make-json-request (mock/request :put "/visits/0") put-body)
+          put-response @(@handler put-request)]
+      (is (= 400 (:status put-response))))))
+
+(deftest delete-visits-id-exists
+    (testing "DELETE /visits/<someid> (existing entry)"
+    (let [create-request (make-json-request (mock/request :post "/visits") example-visit)
+          create-response @(@handler create-request)
+          location (get-in create-response [:headers "location"])
+          delete-request (mock/request :delete location)
+          delete-response @(@handler delete-request)
+          get-request (mock/request :get location)
+          get-response @(@handler get-request)]
+      (is (= 204 (:status delete-response)))
+      (is (= 404 (:status get-response))))))
+
+(deftest delete-visits-id-does-not-exist
+  (testing "DELETE /visits/<id> (<id> doesn't exist)"
+    (let [delete-request (mock/request :delete "/visits/0")
+          delete-response @(@handler delete-request)]
+      (is (= 204 (:status delete-response))))))
