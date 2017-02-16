@@ -10,7 +10,10 @@
                  [aleph "0.4.1"]
                  [yada "1.1.46"]
                  [ring/ring-mock "0.3.0"]
-                 [cheshire "5.6.3"]]
+                 [cheshire "5.6.3"]
+                 [com.layerware/hugsql "0.4.7"]
+                 [org.postgresql/postgresql "9.4.1212"]
+]
   :profiles {:dev {:dependencies [[reloaded.repl "0.2.3"]]
                    :source-paths ["dev"]}}
   :source-paths ["src/clj" "src/cljc"]
