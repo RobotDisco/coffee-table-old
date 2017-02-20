@@ -1,7 +1,7 @@
 (ns coffee-table.resources
   (:require [yada.yada :as yada]
             [coffee-table.model :refer [Visit]]
-            [coffee-table.bullshit-database :as dbc]
+            [coffee-table.database :as dbc]
             [clojure.pprint :as pprint])
   (:import [java.net URI]))
 

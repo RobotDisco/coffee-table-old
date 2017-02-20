@@ -6,13 +6,18 @@
              [coffee-table.model :refer [Visit]]
              [coffee-table.system :refer [test-system]]
              [cheshire.core :refer [generate-string parse-string]]
+             [cheshire.generate :refer [add-encoder]]
              [byte-streams :as bs :refer [convert]]
              [com.stuartsierra.component :as component]
-             [schema.test]))
+             [schema.test])
+  (:import [java.time LocalDate]))
 
 (def system (atom nil))
 (def handler (atom nil))
 
+(add-encoder java.time.LocalDate
+             (fn [c jsonGenerator]
+               (.writeString jsonGenerator (.toString c))))
 
 (defn with-test-system [f]
   (reset! system (component/start (test-system)))
@@ -27,7 +32,7 @@
 (def example-visit {:name "Minumum Data"
                     :beverage-rating 5
                     :beverage-ordered "Cortado"
-                    :date (java.util.Date.)})
+                    :date (-> (LocalDate/now) java.sql.Date/valueOf)})
 
 (defn make-json-request [request body]
   (-> request
@@ -55,7 +60,7 @@
           location (get-in create-response [:headers "location"])
           get-request (mock/request :get location)
           get-response @(@handler get-request)]
-      (is (= (assoc example-visit :id 0) (update (-> get-response :body bs/to-string (parse-string true)) :date clojure.instant/read-instant-date))))))
+      (is (= (assoc example-visit :id (Integer. (re-find #"\d+" location))) (update (-> get-response :body bs/to-string (parse-string true)) :date clojure.instant/read-instant-date))))))
 
 (deftest get-visits-id-does-not-exist
   (testing "GET /visits/<someid> (nonexistant entity)"
@@ -84,8 +89,6 @@
           location (get-in @(@handler create-request) [:headers "location"])
           put-body (assoc example-visit :name "Updated Café")
           put-request (make-json-request (mock/request :put location) put-body)
-          _ (require 'coffee-table.bullshit-database)
-          butt (coffee-table.bullshit-database/update-visit (:db @system) 0 put-body)
           put-response @(@handler put-request)]
       (is (= 204 (:status put-response))))))
 
