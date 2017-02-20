@@ -34,20 +34,22 @@
 (def DBVisitResult
   (s/maybe DBVisit))
 
-(s/defn db->visit :- Visit
-  [dbvisit]
-  (into {} (remove (comp nil? second)
-                   (clojure.set/rename-keys dbvisit
-                                            {:cafe_name :name,
-                                             :date_visited :date
-                                             :beverage_rating :beverage-rating
-                                             :beverage_ordered :beverage-ordered
-                                             :beverage_notes :beverage-notes
-                                             :service_rating :service-rating
-                                             :service_notes :service-notes
-                                             :ambience_notes :ambience-notes
-                                             :ambience_rating :ambience-rating
-                                             :other_notes :other-notes}))))
+(s/defn db->visit :- DBVisitResult
+  [visit]
+  (if (nil? visit)
+    nil
+    (into {} (remove (comp nil? second)
+                     (clojure.set/rename-keys visit
+                                              {:cafe_name :name,
+                                               :date_visited :date
+                                               :beverage_rating :beverage-rating
+                                               :beverage_ordered :beverage-ordered
+                                               :beverage_notes :beverage-notes
+                                               :service_rating :service-rating
+                                               :service_notes :service-notes
+                                               :ambience_notes :ambience-notes
+                                               :ambience_rating :ambience-rating
+                                               :other_notes :other-notes})))))
 
 (s/defrecord Database []
   component/Lifecycle
@@ -77,6 +79,22 @@
   (let [{:keys [id]} (first (dbv/insert-visit (:spec component) v))
         res (visit component id)]
     res))
+
+(s/defn delete-visit :- s/Bool
+  [component
+   visit-id :- s/Int]
+  (dbv/delete-visit-by-id (:spec component) {:id visit-id})
+  true)
+
+(s/defn update-visit :- DBVisitResult
+  [component
+   update-visit :- Visit]
+  (let [update-idx (m/visit-id update-visit)]
+    (if (nil? (visit component update-idx))
+      nil
+      (do
+        (dbv/update-visit-by-id (:spec component) update-visit)
+        (visit component (m/visit-id update-visit))))))
 
 (defn setup [component]
   (let [conn (:spec component)]

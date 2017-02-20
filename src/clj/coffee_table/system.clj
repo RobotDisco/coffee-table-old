@@ -1,7 +1,6 @@
 (ns coffee-table.system
   (:require [com.stuartsierra.component :as component]
             [coffee-table.database :as dbc]
-            [coffee-table.bullshit-database :as bsd]
             [coffee-table.web-server :as ws]))
 
 (defn dev-system []
