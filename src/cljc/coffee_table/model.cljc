@@ -19,7 +19,7 @@
    :name s/Str
    :date s/Inst
    (s/optional-key :address) Address
-   (s/optional-key :espresso-machine) s/Str
+   (s/optional-key :machine) s/Str
    (s/optional-key :grinder) s/Str
    (s/optional-key :roast) s/Str
    :beverage-ordered s/Str
@@ -30,6 +30,8 @@
    (s/optional-key :ambience-rating) Rating
    (s/optional-key :ambience-notes) s/Str
    (s/optional-key :other-notes) s/Str})
+
+(s/defn new-visit [])
 
 (s/defn visit-id [visit :- Visit] :- s/Int
   (:id visit))

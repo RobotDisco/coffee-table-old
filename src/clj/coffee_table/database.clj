@@ -1,0 +1,83 @@
+(ns coffee-table.database
+  (:require [com.stuartsierra.component :as component]
+            [schema.core :as s]
+            [coffee-table.model :as m :refer [Visit]]
+            [coffee-table.db.visits :as dbv]
+            [clojure.java.jdbc :as jdbc])
+  (:import [java.sql PreparedStatement]))
+
+(def DEFAULT-DB-SPEC
+  {:dbtype   "postgresql"
+   :dbname   "postgres"
+   :user     "postgres"
+   :password "password"
+   :host     "127.0.0.1"
+   :port     5432})
+
+(defn to-date [sql-date]
+  (-> sql-date (.getTime) (java.util.Date.)))
+
+(extend-protocol jdbc/IResultSetReadColumn
+  java.sql.Date
+  (result-set-read-column [value metadata index]
+    (to-date value)))
+
+(extend-type java.util.Date
+  jdbc/ISQLParameter
+  (set-parameter [value ^PreparedStatement stmt idx]
+    (.setTimestamp stmt idx (java.sql.Timestamp. (.getTime value)))))
+
+(def DBVisit
+  "Schema for visit that came from a DB"
+  (s/conditional #(contains? % :id) Visit))
+
+(def DBVisitResult
+  (s/maybe DBVisit))
+
+(s/defn db->visit :- Visit
+  [dbvisit]
+  (into {} (remove (comp nil? second)
+                   (clojure.set/rename-keys dbvisit
+                                            {:cafe_name :name,
+                                             :date_visited :date
+                                             :beverage_rating :beverage-rating
+                                             :beverage_ordered :beverage-ordered
+                                             :beverage_notes :beverage-notes
+                                             :service_rating :service-rating
+                                             :service_notes :service-notes
+                                             :ambience_notes :ambience-notes
+                                             :ambience_rating :ambience-rating
+                                             :other_notes :other-notes}))))
+
+(s/defrecord Database []
+  component/Lifecycle
+  (start [this]
+    (assoc this :spec DEFAULT-DB-SPEC))
+  (stop [this]
+    (dissoc this :spec)))
+
+(s/defn new-database
+  []
+  (map->Database {}))
+
+(s/defn visits :- [DBVisit]
+  [component]
+  (mapv db->visit (dbv/all-visits (:spec component))))
+
+(s/defn visit :- DBVisitResult
+  [component
+   id :- (s/maybe s/Int)]
+  (if (nil? id)
+    nil
+    (db->visit (dbv/visit-by-id (:spec component) {:id id}))))
+
+(s/defn add-visit :- DBVisitResult
+  [component
+   v :- Visit]
+  (let [{:keys [id]} (first (dbv/insert-visit (:spec component) v))
+        res (visit component id)]
+    res))
+
+(defn setup [component]
+  (let [conn (:spec component)]
+    (dbv/create-visits-table conn)))
