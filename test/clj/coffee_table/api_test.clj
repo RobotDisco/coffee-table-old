@@ -9,6 +9,7 @@
              [cheshire.generate :refer [add-encoder]]
              [byte-streams :as bs :refer [convert]]
              [com.stuartsierra.component :as component]
+             [coffee-table.db.visits]
              [schema.test])
   (:import [java.time LocalDate]))
 
@@ -25,7 +26,11 @@
   (f)
   (component/stop @system))
 
-(use-fixtures :each with-test-system)
+(defn clean-visits-table [f]
+  (coffee-table.db.visits/delete-all-visits (get-in @system [:db :spec]))
+  (f))
+
+(use-fixtures :each with-test-system clean-visits-table)
 (use-fixtures :once schema.test/validate-schemas)
 
 

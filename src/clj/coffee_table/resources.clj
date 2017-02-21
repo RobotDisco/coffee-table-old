@@ -37,7 +37,8 @@
                     :response (fn [ctx]
                                 (let [id (get-in ctx [:parameters :path :id])
                                       updated-visit (get-in ctx [:parameters :body])
-                                      res (dbc/update-visit db id updated-visit)]
+                                      updated-visit1 (assoc updated-visit :id id)
+                                      res (dbc/update-visit db updated-visit1)]
                                   (if-not (nil? res)
                                     nil
                                     (assoc-in ctx [:response :status] 404))))}}}))

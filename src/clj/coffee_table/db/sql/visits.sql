@@ -80,5 +80,9 @@ cafe_name = :name
 where id = :id
 
 -- :name delete-visit-by-id :! :n
--- :doc Delete a café vosot with the given ID
+-- :doc Delete a café visit with the given ID
 delete from visits where id = :id
+
+-- :name delete-all-visits :! :n
+-- :doc Delete all visits
+delete from visits
