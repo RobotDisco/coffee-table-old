@@ -95,7 +95,3 @@
       (do
         (dbv/update-visit-by-id (:spec component) update-visit)
         (visit component (m/visit-id update-visit))))))
-
-(defn setup [component]
-  (let [conn (:spec component)]
-    (dbv/create-visits-table conn)))
