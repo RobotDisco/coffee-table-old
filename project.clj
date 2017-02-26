@@ -4,18 +4,47 @@
   :license {:name "GNU General Public License 3.0"
             :url "http://www.gnu.org/licenses/gpl-3.0.txt"
             :distribution :repo}
-  :dependencies [[org.clojure/clojure "1.8.0"]
+  :dependencies [;; Core Language(s)
+                 [org.clojure/clojure "1.8.0"]
+                 [org.clojure/clojurescript "1.9.494"]
+
+                 ;; Model schema/verification
                  [prismatic/schema "1.1.3"]
+
+                 ;; Backend state management
                  [com.stuartsierra/component "0.3.1"]
+
+                 ;; Backend HTTP server
                  [aleph "0.4.1"]
+
+                 ;; API: REST framework
                  [yada "1.1.46"]
-                 [ring/ring-mock "0.3.0"]
+
+                 ;; JSON parsing
                  [cheshire "5.6.3"]
+
+                 ;; DB: SQL, migrations
                  [com.layerware/hugsql "0.4.7"]
                  [org.postgresql/postgresql "9.4.1212"]
                  [migratus "0.8.32"]
                  [org.slf4j/slf4j-log4j12 "1.7.9"]]
-  :profiles {:dev {:dependencies [[reloaded.repl "0.2.3"]]
+  :plugins [[lein-figwheel "0.5.9"]
+            [lein-cljsbuild "1.1.5"]]
+  :profiles {:dev {:dependencies [;; Component/namespace mgmt
+                                  [reloaded.repl "0.2.3"]
+                                  ;; Testing mocks
+                                  [ring/ring-mock "0.3.0"]
+                                  ;; CLJS interactive prototype visualizer
+                                  [devcards "0.2.2"]]
                    :source-paths ["dev"]}}
+  :cljsbuild {:builds [{:id "dev"
+                        :source-paths ["src/cljs" "src/cljc"]
+                        :figwheel true
+                        :compiler {:main coffee-table.core
+                                   :output-to "resources/public/js/compiled/coffee_table.js"
+                                   :output-dir "resources/public/js/compiled/out-dev"
+                                   :asset-path "js/compiled/out-dev"
+                                   :optimizations :none
+                                   :pretty-print true}}]}
   :source-paths ["src/clj" "src/cljc"]
   :test-paths ["test/clj" "test/cljc"])

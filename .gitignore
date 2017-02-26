@@ -9,8 +9,16 @@ pom.xml.asc
 /classes/
 /target/
 /checkouts/
+/resources/public/js/compiled/
 .lein-deps-sum
 .lein-repl-history
 .lein-plugins/
 .lein-failures
 .nrepl-port
+
+### Figwheel
+figwheel_server.log
+
+### Editor backups
+*~
+*#
