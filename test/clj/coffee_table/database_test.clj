@@ -1,10 +1,11 @@
 (ns coffee-table.database-test
-  (:require  [coffee-table.database :as dbc]
-             [coffee-table.system :refer [test-system]]
-             [clojure.test :refer :all]
-             [schema.test]
-             [com.stuartsierra.component :as component]
-             [coffee-table.model :as m]))
+  (:require [clojure.test :refer :all]
+            [coffee-table
+             [model :as m]
+             [system :refer [test-system]]]
+            [coffee-table.component.database :as dbc]
+            [com.stuartsierra.component :as component]
+            schema.test))
 
 (use-fixtures :once schema.test/validate-schemas)
 

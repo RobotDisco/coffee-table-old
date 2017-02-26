@@ -1,6 +1,6 @@
 (ns coffee-table.db.migrations
-  (:require [migratus.core :as migratus]
-            [coffee-table.database :refer [DEFAULT-DB-SPEC]]))
+  (:require [coffee-table.component.database :refer [DEFAULT-DB-SPEC]]
+            [migratus.core :as migratus]))
 
 (def config {:store :database
              :migration-dir "migrations"

@@ -1,4 +1,4 @@
-(ns coffee-table.web-server
+(ns coffee-table.component.web-server
   (:require [schema.core :as s]
             [yada.yada :as yada]
             [com.stuartsierra.component :as component]

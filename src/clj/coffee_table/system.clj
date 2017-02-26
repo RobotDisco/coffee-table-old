@@ -1,7 +1,8 @@
 (ns coffee-table.system
-  (:require [com.stuartsierra.component :as component]
-            [coffee-table.database :as dbc]
-            [coffee-table.web-server :as ws]))
+  (:require [coffee-table.component
+             [database :as dbc]
+             [web-server :as ws]]
+            [com.stuartsierra.component :as component]))
 
 (defn dev-system []
   (component/system-map

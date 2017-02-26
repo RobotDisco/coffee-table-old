@@ -1,4 +1,4 @@
-(ns coffee-table.database
+(ns coffee-table.component.database
   (:require [com.stuartsierra.component :as component]
             [schema.core :as s]
             [coffee-table.model :as m :refer [Visit]]

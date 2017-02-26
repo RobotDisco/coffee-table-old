@@ -1,9 +1,9 @@
 (ns coffee-table.resources
-  (:require [yada.yada :as yada]
+  (:require [clojure.pprint :as pprint]
+            [coffee-table.component.database :as dbc]
             [coffee-table.model :refer [Visit]]
-            [coffee-table.database :as dbc]
-            [clojure.pprint :as pprint])
-  (:import [java.net URI]))
+            [yada.yada :as yada])
+  (:import java.net.URI))
 
 (defn new-visit-index-resource [db]
   (yada/resource
