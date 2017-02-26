@@ -42,9 +42,17 @@
                         :figwheel true
                         :compiler {:main coffee-table.core
                                    :output-to "resources/public/js/compiled/coffee_table.js"
-                                   :output-dir "resources/public/js/compiled/out-dev"
-                                   :asset-path "js/compiled/out-dev"
+                                   :output-dir "resources/public/js/compiled/out_dev"
+                                   :asset-path "js/compiled/out_dev"
                                    :optimizations :none
-                                   :pretty-print true}}]}
+                                   :pretty-print true}}
+                       {:id "devcards"
+                        :source-paths ["src/cljs" "src/cljc"]
+                        :figwheel {:devcards true}
+                        :compiler {:main "coffee-table.devcards.core"
+                                   :asset-path "js/compiled/out_devcards"
+                                   :output-to "resources/public/js/compiled/coffee_table_devcards.js"
+                                   :output-dir "resources/public/js/compiled/out_devcards"
+                                   :source-map-timestamp true}}]}
   :source-paths ["src/clj" "src/cljc"]
   :test-paths ["test/clj" "test/cljc"])
