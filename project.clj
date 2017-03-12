@@ -35,7 +35,10 @@
                                   ;; Testing mocks
                                   [ring/ring-mock "0.3.0"]
                                   ;; CLJS interactive prototype visualizer
-                                  [devcards "0.2.2"]]
+                                  [devcards "0.2.2"]
+                                  ;; CLJS REPL
+                                  [com.cemerick/piggieback "0.2.1"]
+                                  [figwheel-sidecar "0.5.4-6"]]
                    :source-paths ["dev"]}}
   :cljsbuild {:builds [{:id "dev"
                         :source-paths ["src/cljs" "src/cljc"]
