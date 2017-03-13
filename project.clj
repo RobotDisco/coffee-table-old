@@ -27,7 +27,13 @@
                  [com.layerware/hugsql "0.4.7"]
                  [org.postgresql/postgresql "9.4.1212"]
                  [migratus "0.8.32"]
-                 [org.slf4j/slf4j-log4j12 "1.7.9"]]
+                 [org.slf4j/slf4j-log4j12 "1.7.9"]
+
+                 ;; Semantic UI (CSS Framework)
+                 [cljsjs/semantic-ui-react "0.64.7-0"]
+
+                 ;; Reagent (React Framework)
+                 [reagent "0.6.1"]]
   :plugins [[lein-figwheel "0.5.9"]
             [lein-cljsbuild "1.1.5"]]
   :profiles {:dev {:dependencies [;; Component/namespace mgmt

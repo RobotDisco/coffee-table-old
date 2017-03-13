@@ -1,5 +1,12 @@
 (ns coffee-table.devcards.core
-  (:require-macros [devcards.core :refer [defcard]]))
+  (:require devcards.core
+            goog.object
+            [reagent.core :as reagent]
+            [cljsjs.semantic-ui-react])
+  (:require-macros [devcards.core :as dc :refer [defcard defcard-rg]]))
 
-(defcard first-card
-  "<h1>Hello World</h1")
+(def semantic-ui js/semanticUIReact)
+(def rating (goog.object/get semantic-ui "Rating"))
+
+(dc/defcard-rg view
+  [:> rating {:defaultRating 3 :maxRating 5}])
