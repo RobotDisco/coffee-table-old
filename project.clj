@@ -32,8 +32,14 @@
                  ;; Semantic UI (CSS Framework)
                  [cljsjs/semantic-ui-react "0.64.7-0"]
 
+                 ;; Re-frame (Redux for Clojurescript)
+                 [re-frame "0.9.2"]
+
                  ;; Reagent (React Framework)
-                 [reagent "0.6.1"]]
+                 [reagent "0.6.1"]
+
+                 ;; Reagent/Re-frame state inspector
+                 [re-frisk "0.4.4"]]
   :plugins [[lein-figwheel "0.5.9"]
             [lein-cljsbuild "1.1.5"]]
   :profiles {:dev {:dependencies [;; Component/namespace mgmt
@@ -41,15 +47,18 @@
                                   ;; Testing mocks
                                   [ring/ring-mock "0.3.0"]
                                   ;; CLJS interactive prototype visualizer
-                                  [devcards "0.2.2"]
+                                  [devcards "0.2.2" :exclusions [cljsjs/react cljsjs/react-dom]]
                                   ;; CLJS REPL
                                   [com.cemerick/piggieback "0.2.1"]
-                                  [figwheel-sidecar "0.5.4-6"]]
+                                  [figwheel-sidecar "0.5.4-6"]
+                                  ;; Chrome DevTools extensions for CLJS
+                                  [binaryage/devtools "0.9.2"]]
                    :source-paths ["dev"]}}
   :cljsbuild {:builds [{:id "dev"
                         :source-paths ["src/cljs" "src/cljc"]
-                        :figwheel true
-                        :compiler {:main coffee-table.core
+                        :figwheel {:on-jsload coffee-table.core/main}
+                        :compiler {:preloads [devtools.preload]
+                                   :main coffee-table.core
                                    :output-to "resources/public/js/compiled/coffee_table.js"
                                    :output-dir "resources/public/js/compiled/out_dev"
                                    :asset-path "js/compiled/out_dev"
@@ -58,7 +67,8 @@
                        {:id "devcards"
                         :source-paths ["src/cljs" "src/cljc"]
                         :figwheel {:devcards true}
-                        :compiler {:main "coffee-table.devcards.core"
+                        :compiler {:preloads [devtools.preload]
+                                   :main coffee-table.devcards.core
                                    :asset-path "js/compiled/out_devcards"
                                    :output-to "resources/public/js/compiled/coffee_table_devcards.js"
                                    :output-dir "resources/public/js/compiled/out_devcards"
