@@ -34,6 +34,9 @@
 
                  ;; Re-frame (Redux for Clojurescript)
                  [re-frame "0.9.2"]
+                 ;; Re-frame AJAX effect handlers
+                 [cljs-ajax "0.5.8"]
+                 [day8.re-frame/http-fx "0.1.3"]
 
                  ;; Reagent (React Framework)
                  [reagent "0.6.1"]
