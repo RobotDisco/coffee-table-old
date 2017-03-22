@@ -8,6 +8,8 @@
 (defn new-visit-index-resource [db]
   (yada/resource
    {:description "Café Visit index"
+    :access-control {:allow-origin "*"
+                     :allow-methods #{:get :post}}
     :consumes #{"application/json"}
     :produces #{"application/json"}
     :methods {:get {:response (fn [ctx]
