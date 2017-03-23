@@ -1,11 +1,11 @@
 (ns coffee-table.model
   (:require [schema.core :as s]))
 
-(def Rating
+(s/defschema Rating
   "Numeric score for various visit factors"
   (s/enum 1 2 3 4 5))
 
-(def Address
+(s/defschema Address
   "Location information"
   {:address1 s/Str
    (s/optional-key :address2) s/Str
@@ -13,7 +13,7 @@
    :region s/Str
    :country s/Str})
 
-(def Visit
+(s/defschema Visit
   "Schema for coffee table visits"
   {(s/optional-key :id) s/Int
    :name s/Str
@@ -36,7 +36,7 @@
 (s/defn visit-id [visit :- Visit] :- s/Int
   (:id visit))
 
-(def Summary
+(s/defschema Summary
   "Schema for coffee table summaries"
   {:name s/Str
    :date s/Inst
