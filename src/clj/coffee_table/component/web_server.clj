@@ -1,6 +1,7 @@
 (ns coffee-table.component.web-server
   (:require [schema.core :as s]
             [yada.yada :as yada]
+            [yada.resources.classpath-resource :refer [new-classpath-resource]]
             [com.stuartsierra.component :as component]
             [coffee-table.resources :refer [new-visit-node-resource new-visit-index-resource]]))
 
@@ -9,7 +10,8 @@
   [""
    [["/visits" [["" (new-visit-index-resource db)]
                 [["/" :id] (new-visit-node-resource db)]]]
-    [true (yada/as-resource nil)]]])
+    ["" (new-classpath-resource "public"
+                                {:index-files ["index.html"]})]]])
 
 (s/defrecord WebServer [db]
   component/Lifecycle
