@@ -6,6 +6,8 @@
             [re-frame.core :as rf]
             [reagent.core :as reagent]))
 
+(enable-console-print!)
+
 (defn ^:export main
   []
   (rf/dispatch [:initialize-db])

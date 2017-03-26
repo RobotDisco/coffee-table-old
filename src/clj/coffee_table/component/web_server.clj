@@ -17,7 +17,7 @@
   component/Lifecycle
   (start [component]
     (let [app-routes (routes db)
-          listener (yada/listener app-routes {:port 8080})]
+          listener (yada/listener app-routes {:port 80})]
       (assoc component :listener listener)))
   (stop [component]
     (when-let [close (get-in component [:listener :close])]

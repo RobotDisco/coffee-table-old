@@ -4,6 +4,7 @@
   :license {:name "GNU General Public License 3.0"
             :url "http://www.gnu.org/licenses/gpl-3.0.txt"
             :distribution :repo}
+  :local-repo ".m2"
   :dependencies [;; Core Language(s)
                  [org.clojure/clojure "1.8.0"]
                  [org.clojure/clojurescript "1.9.494"]
@@ -44,7 +45,9 @@
                  ;; Reagent/Re-frame state inspector
                  [re-frisk "0.4.4"]]
   :plugins [[lein-figwheel "0.5.9"]
-            [lein-cljsbuild "1.1.5"]]
+            [lein-cljsbuild "1.1.5"]
+            [cider/cider-nrepl "0.14.0"]
+            [refactor-nrepl "2.2.0"]]
   :profiles {:dev {:dependencies [;; Component/namespace mgmt
                                   [reloaded.repl "0.2.3"]
                                   ;; Testing mocks
@@ -56,6 +59,7 @@
                                   [figwheel-sidecar "0.5.4-6"]
                                   ;; Chrome DevTools extensions for CLJS
                                   [binaryage/devtools "0.9.2"]]
+                   :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
                    :source-paths ["dev"]}}
   :cljsbuild {:builds [{:id "dev"
                         :source-paths ["src/cljs" "src/cljc"]
