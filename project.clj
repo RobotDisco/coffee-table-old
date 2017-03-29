@@ -43,7 +43,10 @@
                  [reagent "0.6.1"]
 
                  ;; Reagent/Re-frame state inspector
-                 [re-frisk "0.4.4"]]
+                 [re-frisk "0.4.4"]
+
+                 ;; Time Processing libraries
+                 [com.andrewmcveigh/cljs-time "0.4.0"]]
   :plugins [[lein-figwheel "0.5.9"]
             [lein-cljsbuild "1.1.5"]
             [cider/cider-nrepl "0.14.0"]

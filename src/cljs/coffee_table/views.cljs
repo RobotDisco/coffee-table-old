@@ -1,6 +1,7 @@
 (ns coffee-table.views
   (:require cljsjs.semantic-ui-react
-            goog.object))
+            goog.object
+            [re-frame.core :as rf]))
 
 (def semantic-ui js/semanticUIReact)
 
@@ -20,16 +21,18 @@
 (def icon (component "Icon"))
 (def rating (component "Rating"))
 
-(defn summary-widget []
+(defn summary [visit]
   [:> segment [:div
-               [:div [:strong "Café Name"]]
-               [:div [:> icon {:name "calendar"}] "01/01/83"]
-               [:div [:> icon {:name "coffee"}] [:> rating {:defaultRating 3
+               [:div [:strong (:name visit)]]
+               [:div [:> icon {:name "calendar"}] (:date visit)]
+               [:div [:> icon {:name "coffee"}] [:> rating {:defaultRating (:beverage-rating visit)
                                                             :maxRating 5
                                                             :disabled true}]]]])
 
 (defn summaries []
-  [:> container (repeatedly 5 summary-widget)])
+  (let [visits @(rf/subscribe [:visits/all])]
+    [:> container (for [visit visits]
+                    ^{:key (:id visit)} [summary visit])]))
 
 (defn app []
   [:div
