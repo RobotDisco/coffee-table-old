@@ -1,5 +1,6 @@
 (ns coffee-table.model
-  (:require [schema.core :as s]))
+  (:require [schema.core :as s]
+            #?(:cljs [cljs-time.format :as time])))
 
 (s/defschema Rating
   "Numeric score for various visit factors"
@@ -35,6 +36,13 @@
 
 (s/defn visit-id [visit :- Visit] :- s/Int
   (:id visit))
+
+(s/defn json-to-visit
+  "Convert JSON entity into a visit"
+  [json]
+  :- Visit
+  (update json :date #?(:clj identity
+                        :cljs time/parse)))
 
 (s/defschema Summary
   "Schema for coffee table summaries"

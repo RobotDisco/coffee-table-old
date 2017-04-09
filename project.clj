@@ -24,6 +24,9 @@
                  ;; JSON parsing
                  [cheshire "5.6.3"]
 
+                 ;; Date processing
+                 [com.andrewmcveigh/cljs-time "0.4.0"]
+
                  ;; DB: SQL, migrations
                  [com.layerware/hugsql "0.4.7"]
                  [org.postgresql/postgresql "9.4.1212"]
@@ -64,6 +67,7 @@
                                   [binaryage/devtools "0.9.2"]]
                    :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
                    :source-paths ["dev"]}}
+  :clean-targets ^{:protect false} ["resources/public/js/compiled" "target"]
   :cljsbuild {:builds [{:id "dev"
                         :source-paths ["src/cljs" "src/cljc"]
                         :figwheel {:on-jsload coffee-table.core/main}

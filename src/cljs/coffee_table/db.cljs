@@ -4,4 +4,8 @@
 
 (s/defschema AppDBSchema
   {:visits/all [m/Visit]
-   :visits/loaded? s/Bool})
+   :visits/loading? s/Bool})
+
+(def initial-value
+  {:visits/all []
+   :visits/loading? true})
