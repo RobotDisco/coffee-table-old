@@ -28,6 +28,7 @@
 
 (rf/reg-event-db
  :initialize-db
+ #_ coffee-table-interceptors
  (fn [_ _]
    db/initial-value))
 
@@ -50,7 +51,7 @@
        (assoc :visits/loading? false)
        (assoc :visits/all (->> response
                               js->clj
-                              (mapv m/json-to-visit))))))
+                              (mapv m/JSON-Visit))))))
 
 (rf/reg-event-db
  :bad-response

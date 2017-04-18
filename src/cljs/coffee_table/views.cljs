@@ -2,7 +2,8 @@
   (:require cljsjs.semantic-ui-react
             goog.object
             [re-frame.core :as rf]
-            [cljs-time.format :as time]))
+            [cljs-time.format :as time]
+            [cljs-time.coerce :as tcoerce]))
 
 (def semantic-ui js/semanticUIReact)
 
@@ -25,9 +26,9 @@
 (defn summary [visit]
   [:> segment [:div
                [:div [:strong (:name visit)]]
-               [:div [:> icon {:name "calendar"}] (->> visit
-                                                       :date
-                                                      (time/unparse (:date time/formatters)))]
+               [:div [:> icon {:name "calendar"}] (->> (:date visit)
+                                                       tcoerce/from-date
+                                                       (time/unparse (:date time/formatters)))]
                [:div [:> icon {:name "coffee"}] [:> rating {:defaultRating (:beverage-rating visit)
                                                             :maxRating 5
                                                             :disabled true}]]]])
