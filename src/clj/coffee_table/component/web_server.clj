@@ -5,8 +5,9 @@
             [com.stuartsierra.component :as component]
             [coffee-table.resources :refer [new-visit-node-resource new-visit-index-resource]]))
 
-(defn routes [db]
+(defn routes
   "Create URI route structure for our application."
+  [db]
   [""
    [["/visits" [["" (new-visit-index-resource db)]
                 [["/" :id] (new-visit-node-resource db)]]]

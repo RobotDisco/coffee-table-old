@@ -33,9 +33,7 @@
    (s/optional-key :ambience-notes) s/Str
    (s/optional-key :other-notes) s/Str})
 
-(s/defn new-visit [])
-
-(s/defn visit-id [visit :- Visit] :- s/Int
+(s/defn visit-id :- s/Int [visit :- Visit]
   (:id visit))
 
 #?(:cljs (defn visit-json-coercion-matcher
