@@ -11,7 +11,7 @@
    :dbname   "postgres"
    :user     "postgres"
    :password "password"
-   :host     "db"
+   :host     "localhost"
    :port     5432})
 
 (defn to-date [sql-date]
