@@ -36,8 +36,7 @@
 
 (s/defn db->visit :- DBVisitResult
   [visit]
-  (if (nil? visit)
-    nil
+  (when-not (nil? visit)
     (into {} (remove (comp nil? second)
                      (clojure.set/rename-keys visit
                                               {:cafe_name :name,
@@ -69,8 +68,7 @@
 (s/defn visit :- DBVisitResult
   [component
    id :- (s/maybe s/Int)]
-  (if (nil? id)
-    nil
+  (when-not (nil? id)
     (db->visit (dbv/visit-by-id (:spec component) {:id id}))))
 
 (s/defn add-visit :- DBVisitResult
@@ -90,8 +88,6 @@
   [component
    update-visit :- Visit]
   (let [update-idx (m/visit-id update-visit)]
-    (if (nil? (visit component update-idx))
-      nil
-      (do
-        (dbv/update-visit-by-id (:spec component) update-visit)
-        (visit component (m/visit-id update-visit))))))
+    (when-not (nil? (visit component update-idx))
+      (dbv/update-visit-by-id (:spec component) update-visit)
+      (visit component (m/visit-id update-visit)))))
