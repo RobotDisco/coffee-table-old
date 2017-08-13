@@ -50,7 +50,8 @@
   :plugins [[lein-figwheel "0.5.9"]
             [lein-cljsbuild "1.1.5"]
             [cider/cider-nrepl "0.14.0"]
-            [refactor-nrepl "2.2.0"]]
+            [refactor-nrepl "2.2.0"]
+            [migratus-lein "0.5.0"]]
   :profiles {:dev {:dependencies [;; Component/namespace mgmt
                                   [reloaded.repl "0.2.3"]
                                   ;; Testing mocks
@@ -85,4 +86,13 @@
                                    :output-dir "resources/public/js/compiled/out_devcards"
                                    :source-map-timestamp true}}]}
   :source-paths ["src/clj" "src/cljc"]
-  :test-paths ["test/clj" "test/cljc"])
+  :test-paths ["test/clj" "test/cljc"]
+  :migratus {:store :database
+             :migration-dir "migrations"
+             :migration-table-name "schema_migrations"
+             :db {:dbtype   "postgresql"
+                  :dbname   "postgres"
+                  :user     "postgres"
+                  :password "password"
+                  :host     "localhost"
+                  :port     5432}})
