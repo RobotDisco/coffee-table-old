@@ -7,7 +7,8 @@
 
 (defn new-visit-index-resource [db]
   (yada/resource
-   {:description "Café Visit index"
+   {:access-control {:allow-origin "http://localhost:3449"}
+    :description "Café Visit index"
     :consumes #{"application/json"}
     :produces #{"application/json"}
     :methods {:get {:response (fn [ctx]
@@ -20,7 +21,8 @@
 
 (defn new-visit-node-resource [db]
   (yada/resource
-   {:description "Café Visit entries"
+   {:access-control {:allow-origin "http://localhost:3449"}
+    :description "Café Visit entries"
     :consumes #{"application/json"}
     :produces #{"application/json"}
     :parameters {:path {:id Long}}

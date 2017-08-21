@@ -11,14 +11,13 @@
   [""
    [["/visits" [["" (new-visit-index-resource db)]
                 [["/" :id] (new-visit-node-resource db)]]]
-    ["" (new-classpath-resource "public"
-                                {:index-files ["index.html"]})]]])
+    [true (yada/as-resource nil)]]])
 
 (s/defrecord WebServer [db]
   component/Lifecycle
   (start [component]
     (let [app-routes (routes db)
-          listener (yada/listener app-routes {:port 80})]
+          listener (yada/listener app-routes {:port 8080})]
       (assoc component :listener listener)))
   (stop [component]
     (when-let [close (get-in component [:listener :close])]
