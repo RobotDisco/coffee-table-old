@@ -22,9 +22,13 @@
 (def segment (component "Segment"))
 (def icon (component "Icon"))
 (def rating (component "Rating"))
+(def form (component "Form"))
+(def field (component "Form" "Field"))
+(def input (component "Form" "Input"))
 
 (defn summary [visit]
   [:> segment [:div
+               {:on-click #(rf/dispatch [:select-visit  visit])}
                [:div [:strong (:name visit)]]
                [:div [:> icon {:name "calendar"}] (->> (:date visit)
                                                        tcoerce/from-date
@@ -37,6 +41,11 @@
   (let [visits @(rf/subscribe [:visits/all])]
     [:> container (for [visit visits]
                     ^{:key (:id visit)} [summary visit])]))
+
+(defn visit []
+  [:> container
+   [:> form
+    [:> field :label "Café Name" :control "input"]]])
 
 (defn app []
   [:div

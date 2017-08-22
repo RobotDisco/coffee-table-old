@@ -3,9 +3,12 @@
             [coffee-table.model :as m]))
 
 (s/defschema AppDBSchema
-  {:visits/all [m/Visit]
+  {:app/mode (s/enum :list :view :edit)
+   :buffer/visit (s/maybe m/Visit)
+   :visits/all [m/Visit]
    :visits/loading? s/Bool})
 
 (def initial-value
-  {:visits/all []
+  {:app/mode :list
+   :visits/all []
    :visits/loading? true})

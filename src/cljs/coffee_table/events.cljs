@@ -54,6 +54,13 @@
                               (mapv m/JSON-Visit))))))
 
 (rf/reg-event-db
+ :select-visit
+ (fn [db [_ visit]]
+   (-> db
+       (assoc :buffer/visit visit)
+       (assoc :app/mode :view))))
+
+(rf/reg-event-db
  :bad-response
  #_ coffee-table-interceptors
  (fn [_ _]))
