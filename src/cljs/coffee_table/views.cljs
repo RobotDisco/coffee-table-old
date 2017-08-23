@@ -48,6 +48,9 @@
     [:> field :label "Café Name" :control "input"]]])
 
 (defn app []
-  [:div
-   [:> header {:as "h1" :text-align "center"} "Coffee Table"]
-   [summaries]])
+  (let [mode @(rf/subscribe [:app/mode])]
+    [:div
+     [:> header {:as "h1" :text-align "center"} "Coffee Table"]
+     (condp = mode
+       :list [summaries]
+       :view [visit])]))
