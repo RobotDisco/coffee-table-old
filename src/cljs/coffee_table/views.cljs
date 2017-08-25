@@ -53,4 +53,5 @@
      [:> header {:as "h1" :text-align "center"} "Coffee Table"]
      (condp = mode
        :list [summaries]
-       :view [visit])]))
+       :view [visit]
+       nil)]))
