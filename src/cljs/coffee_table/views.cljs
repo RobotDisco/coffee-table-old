@@ -45,7 +45,19 @@
 (defn visit []
   [:> container
    [:> form
-    [:> field :label "Café Name" :control "input"]]])
+    [:> field {:label "Café Name" :control "input" :required true}]
+    [:> field {:label "Visit Date" :control "date" :required true}]
+    [:> field {:label "Machine Used" :control "input"}]
+    [:> field {:label "Grinder Used" :control "input"}]
+    [:> field {:label "Coffee Roast" :control "input"}]
+    [:> field {:label "Beverage Ordered" :control "input" :required true}]
+    [:> field {:label "Beverage Rating" :control "input" :required true}]
+    [:> field {:label "Beverage Notes" :control "textarea"}]
+    [:> field {:label "Service Rating" :control "input"}]
+    [:> field {:label "Service Notes" :control "textarea"}]
+    [:> field {:label "Ambience Rating" :control "input"}]
+    [:> field {:label "Ambience Notes" :control "textarea"}]
+    [:> field {:label "Other Notes" :control "textarea"}]]])
 
 (defn app []
   (let [mode @(rf/subscribe [:app/mode])]
