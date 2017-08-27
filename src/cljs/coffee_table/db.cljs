@@ -10,5 +10,6 @@
 
 (def initial-value
   {:app/mode :list
+   :buffer/visit nil
    :visits/all []
    :visits/loading? true})
