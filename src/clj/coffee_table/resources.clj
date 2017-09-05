@@ -7,7 +7,9 @@
 
 (defn new-visit-index-resource [db]
   (yada/resource
-   {:access-control {:allow-origin "http://localhost:3449"}
+   {:access-control {:allow-origin "http://localhost:3449"
+                     :allow-methods [:options :head :get :post]
+                     :allow-headers ["Content-Type"]}
     :description "Café Visit index"
     :consumes #{"application/json"}
     :produces #{"application/json"}
@@ -21,7 +23,9 @@
 
 (defn new-visit-node-resource [db]
   (yada/resource
-   {:access-control {:allow-origin "http://localhost:3449"}
+   {:access-control {:allow-origin "http://localhost:3449"
+                     :allow-methods [:options :head :get :put :delete]
+                     :allow-headers ["Content-Type"]}
     :description "Café Visit entries"
     :consumes #{"application/json"}
     :produces #{"application/json"}

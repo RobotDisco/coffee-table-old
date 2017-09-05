@@ -36,15 +36,24 @@
 (s/defn visit-id :- s/Int [visit :- Visit]
   (:id visit))
 
-#?(:cljs (defn visit-json-coercion-matcher
+#?(:cljs (defn json-visit-coercion-matcher
            [schema]
            (or ({s/Inst (coerce/safe (fn [x] (-> x
                                                  dcoerce/from-string
                                                  dcoerce/to-date)))} schema)
                (coerce/json-coercion-matcher schema))))
 
+#?(:cljs (defn visit-json-coercion-matcher
+           [schema]
+           (or )))
+
 #?(:cljs (def JSON-Visit
-           (coerce/coercer Visit visit-json-coercion-matcher)))
+           (coerce/coercer Visit json-visit-coercion-matcher)))
+
+#?(:cljs (defn Visit-JSON [visit]
+           (-> visit
+               (update :date dcoerce/to-string)
+               clj->js)))
 
 (s/defschema Summary
   "Schema for coffee table summaries"

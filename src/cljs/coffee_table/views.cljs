@@ -58,8 +58,8 @@
                  :control "input"
                  :type "date"
                  :required true
-                 :value (->> (:date visit) tcoerce/from-date (time/unparse (:date time/formatters)))
-                 :on-change #(rf/dispatch [:update-buffer :date (-> % .-target .-value)])}]
+                 :value (->> (:date visit) tcoerce/from-date (time/unparse-local (:date time/formatters)))
+                 :on-change #(rf/dispatch [:update-buffer :date (->> % .-target .-value (time/parse-local (:date time/formatters)) tcoerce/to-date)])}]
       [:> field {:label "Machine Used"
                  :control "input"
                  :value (:machine visit)
@@ -107,10 +107,10 @@
                  :on-change #(rf/dispatch [:update-buffer :other-notes (-> % .-target .-value)])}
        (:other-notes visit)]]
      [:> button-group {}
-      [:> button {:on-click #(rf/dispatch [:switch-mode :list])} "Cancel"]
+      [:> button {:on-click #(rf/dispatch [:cancel-edit])} "Cancel"]
       [:> button-or]
       [:> button {:positive true
-                  :on-click #(rf/dispatch [:save-visit visit])}
+                  :on-click #(rf/dispatch [:submit-visit])}
        (if (nil? (:id visit))
          "Add"
          "Save")]]]))
