@@ -11,7 +11,7 @@
 
 (defn ^:export main
   []
-  (rf/dispatch [:initialize-db])
+  (defonce _init (rf/dispatch [:initialize-db]))
   (rf/dispatch [:fetch-all-visits])
   (reagent/render [views/app] (js/document.getElementById "app"))
   (enable-re-frisk!))
