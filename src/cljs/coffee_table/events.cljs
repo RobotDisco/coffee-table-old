@@ -64,3 +64,8 @@
  :bad-response
  #_ coffee-table-interceptors
  (fn [_ _]))
+
+(rf/reg-event-db
+ :update-buffer
+ (fn [db [_ key value]]
+   (assoc-in db [:buffer/visit key] value)))

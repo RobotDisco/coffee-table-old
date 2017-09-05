@@ -49,25 +49,71 @@
   (let [visit @(rf/subscribe [:buffer/visit])]
     [:> container
      [:> form
-      [:> field {:label "Café Name" :control "input" :required true :defaultValue (:name visit)}]
-      [:> field {:label "Visit Date" :control "input" :type "date" :required true :defaultValue (->> (:date visit)
-                                                                                       tcoerce/from-date
-                                                                                       (time/unparse (:date time/formatters)))}]
-      [:> field {:label "Machine Used" :control "input" :defaultValue (:machine visit)}]
-      [:> field {:label "Grinder Used" :control "input" :defaultValue (:grinder visit)}]
-      [:> field {:label "Coffee Roast" :control "input" :defaultValue (:roast visit)}]
-      [:> field {:label "Beverage Ordered" :control "input" :required true :defaultValue (:beverage-ordered visit)}]
-      [:> field {:label "Beverage Rating" :control "input" :required true :defaultValue (:beverage-rating visit)}]
-      [:> field {:label "Beverage Notes" :control "textarea"} (:beverage-notes visit)]
-      [:> field {:label "Service Rating" :control "input" :defaultValue (:service-rating visit)}]
-      [:> field {:label "Service Notes" :control "textarea"} (:service-notes visit)]
-      [:> field {:label "Ambience Rating" :control "input" :defaultValue (:ambience-rating visit)}]
-      [:> field {:label "Ambience Notes" :control "textarea"} (:ambience-notes visit)]
-      [:> field {:label "Other Notes" :control "textarea"} (:other-notes visit)]]
+      [:> field {:label "Café Name"
+                 :control "input"
+                 :required true
+                 :value (:name visit)
+                 :on-change #(rf/dispatch [:update-buffer :name (-> % .-target .-value)])}]
+      [:> field {:label "Visit Date"
+                 :control "input"
+                 :type "date"
+                 :required true
+                 :value (->> (:date visit) tcoerce/from-date (time/unparse (:date time/formatters)))
+                 :on-change #(rf/dispatch [:update-buffer :date (-> % .-target .-value)])}]
+      [:> field {:label "Machine Used"
+                 :control "input"
+                 :value (:machine visit)
+                 :on-change #(rf/dispatch [:update-buffer :machine (-> % .-target .-value)])}]
+      [:> field {:label "Grinder Used"
+                 :control "input"
+                 :value (:grinder visit)
+                 :on-change #(rf/dispatch [:update-buffer :grinder (-> % .-target .-value)])}]
+      [:> field {:label "Coffee Roast"
+                 :control "input"
+                 :value (:roast visit)
+                 :on-change #(rf/dispatch [:update-buffer :roast (-> % .-target .-value)])}]
+      [:> field {:label "Beverage Ordered"
+                 :control "input"
+                 :required true
+                 :value (:beverage-ordered visit)
+                 :on-change #(rf/dispatch [:update-buffer :beverage-ordered (-> % .-target .-value)])}]
+      [:> field {:label "Beverage Rating"
+                 :control "input"
+                 :required true
+                 :value (:beverage-rating visit)
+                 :on-change #(rf/dispatch [:update-buffer :beverage-rating (-> % .-target .-value)])}]
+      [:> field {:label "Beverage Notes"
+                 :control "textarea"
+                 :on-change #(rf/dispatch [:update-buffer :beverage-notes (-> % .-target .-value)])}
+       (:beverage-notes visit)]
+      [:> field {:label "Service Rating"
+                 :control "input"
+                 :value (:service-rating visit)
+                 :on-change #(rf/dispatch [:update-buffer :service-rating (-> % .-target .-value)])}]
+      [:> field {:label "Service Notes"
+                 :control "textarea"
+                 :on-change #(rf/dispatch [:update-buffer :service-notes (-> % .-target .-value)])}
+       (:service-notes visit)]
+      [:> field {:label "Ambience Rating"
+                 :control "input"
+                 :value (:ambience-rating visit)
+                 :on-change #(rf/dispatch [:update-buffer :ambience-rating (-> % .-target .-value)])}]
+      [:> field {:label "Ambience Notes"
+                 :control "textarea"
+                 :on-change #(rf/dispatch [:update-buffer :ambience-notes (-> % .-target .-value)])}
+       (:ambience-notes visit)]
+      [:> field {:label "Other Notes"
+                 :control "textarea"
+                 :on-change #(rf/dispatch [:update-buffer :other-notes (-> % .-target .-value)])}
+       (:other-notes visit)]]
      [:> button-group {}
-      [:> button {} "Cancel"]
+      [:> button {:on-click #(rf/dispatch [:switch-mode :list])} "Cancel"]
       [:> button-or]
-      [:> button {:positive true} "Save"]]]))
+      [:> button {:positive true
+                  :on-click #(rf/dispatch [:save-visit visit])}
+       (if (nil? (:id visit))
+         "Add"
+         "Save")]]]))
 
 (defn app []
   (let [mode @(rf/subscribe [:app/mode])]
