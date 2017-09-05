@@ -117,9 +117,10 @@
 
 (defn app []
   (let [mode @(rf/subscribe [:app/mode])]
-    [:div
+    [:> container {}
      [:> header {:as "h1" :text-align "center"} "Coffee Table"]
      (condp = mode
-       :list [summaries]
+       :list [:div [summaries]
+              [:> button {} "Add Visit"]]
        :view [visit]
        nil)]))
