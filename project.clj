@@ -44,7 +44,7 @@
 
                  ;; Time Processing libraries
                  [com.andrewmcveigh/cljs-time "0.5.1"]]
-  :plugins [[lein-figwheel "0.5.9"]
+  :plugins [[lein-figwheel "0.5.13"]
             [lein-cljsbuild "1.1.5"]
             [refactor-nrepl "2.2.0"]
             [migratus-lein "0.5.0"]]

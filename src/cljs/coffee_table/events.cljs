@@ -1,5 +1,6 @@
 (ns coffee-table.events
-  (:require [coffee-table.db :as db]
+  (:require [goog.string :as gstring]
+            [coffee-table.db :as db]
             [coffee-table.model :as m]
             [re-frame.core :as rf]
             [schema.core :as s]
@@ -49,11 +50,45 @@
  (fn [db [_ response]]
    (-> db
        (assoc :visits/loading? false)
+       (assoc :app/mode :list)
        (assoc :visits/all (->> response
                               js->clj
                               (mapv m/JSON-Visit))))))
 
 (rf/reg-event-db
+ :select-visit
+ (fn [db [_ visit]]
+   (-> db
+       (assoc :buffer/visit visit)
+       (assoc :app/mode :view))))
+
+(rf/reg-event-db
+ :cancel-edit
+ (fn [db _]
+   (-> db
+       (assoc :app/mode :list))))
+
+(rf/reg-event-fx
+ :submit-visit
+ #_ coffee-table-interceptors
+ (fn [{:keys [db]} _]
+   (let [visit-id (-> db :buffer/visit :id)]
+     {:http-xhrio {:method :put
+                   :uri (gstring/format "http://localhost:8080/visits/%d" visit-id)
+                   :params (-> db
+                               :buffer/visit
+                               m/Visit-JSON)
+                   :format (ajax/json-request-format)
+                   :response-format (ajax/json-response-format {:keywords? true})
+                   :on-success [:fetch-all-visits]
+                   :on-failure [:bad-response]}})))
+
+(rf/reg-event-db
  :bad-response
  #_ coffee-table-interceptors
  (fn [_ _]))
+
+(rf/reg-event-db
+ :update-buffer
+ (fn [db [_ key value]]
+   (assoc-in db [:buffer/visit key] value)))
