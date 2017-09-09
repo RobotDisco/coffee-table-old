@@ -52,10 +52,6 @@
                                                  dcoerce/to-date)))} schema)
                (coerce/json-coercion-matcher schema))))
 
-#?(:cljs (defn visit-json-coercion-matcher
-           [schema]
-           (or )))
-
 #?(:cljs (def JSON-Visit
            (coerce/coercer Visit json-visit-coercion-matcher)))
 
