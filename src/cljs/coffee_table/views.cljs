@@ -121,6 +121,6 @@
      [:> header {:as "h1" :text-align "center"} "Coffee Table"]
      (condp = mode
        :list [:div [summaries]
-              [:> button {} "Add Visit"]]
+              [:> button {:on-click #(rf/dispatch [:add-visit])} "Add Visit"]]
        :view [visit]
        nil)]))

@@ -4,7 +4,8 @@
             [coffee-table.model :as m]
             [re-frame.core :as rf]
             [schema.core :as s]
-            [ajax.core :as ajax]))
+            [ajax.core :as ajax]
+            [cljs-time.core :as time]))
 
 
 ;; Interceptors
@@ -63,6 +64,13 @@
        (assoc :app/mode :view))))
 
 (rf/reg-event-db
+ :add-visit
+ (fn [db _]
+   (-> db
+       (assoc :buffer/visit (m/new-visit "New Visit" (time/today) "New drink" 3))
+       (assoc :app/mode :view))))
+
+(rf/reg-event-db
  :cancel-edit
  (fn [db _]
    (-> db
@@ -72,21 +80,26 @@
  :submit-visit
  #_ coffee-table-interceptors
  (fn [{:keys [db]} _]
-   (let [visit-id (-> db :buffer/visit :id)]
-     {:http-xhrio {:method :put
-                   :uri (gstring/format "http://localhost:8080/visits/%d" visit-id)
+   (let [visit-id (-> db :buffer/visit :id)
+         new-visit (nil? visit-id)
+         base-url "http://localhost:8080/visits"]
+     {:http-xhrio {:method (if new-visit :post :put)
+                   :uri (if new-visit
+                          base-url
+                          (gstring/format "http://localhost:8080/visits/%d" visit-id))
                    :params (-> db
                                :buffer/visit
                                m/Visit-JSON)
                    :format (ajax/json-request-format)
-                   :response-format (ajax/json-response-format {:keywords? true})
+                   :response-format (ajax/raw-response-format)
                    :on-success [:fetch-all-visits]
                    :on-failure [:bad-response]}})))
 
 (rf/reg-event-db
  :bad-response
  #_ coffee-table-interceptors
- (fn [_ _]))
+ (fn [db response]
+   (assoc db :app/error response)))
 
 (rf/reg-event-db
  :update-buffer

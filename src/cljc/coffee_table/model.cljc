@@ -36,16 +36,21 @@
 (s/defn visit-id :- s/Int [visit :- Visit]
   (:id visit))
 
+(s/defn new-visit :- Visit [name :- s/Str
+                            date :- s/Inst
+                            bev-ordered :- s/Str
+                            bev-rating :- Rating]
+  {:name name
+   :date date
+   :beverage-ordered bev-ordered
+   :beverage-rating bev-rating})
+
 #?(:cljs (defn json-visit-coercion-matcher
            [schema]
            (or ({s/Inst (coerce/safe (fn [x] (-> x
                                                  dcoerce/from-string
                                                  dcoerce/to-date)))} schema)
                (coerce/json-coercion-matcher schema))))
-
-#?(:cljs (defn visit-json-coercion-matcher
-           [schema]
-           (or )))
 
 #?(:cljs (def JSON-Visit
            (coerce/coercer Visit json-visit-coercion-matcher)))
