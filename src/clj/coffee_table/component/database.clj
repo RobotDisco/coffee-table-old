@@ -1,8 +1,9 @@
 (ns coffee-table.component.database
   (:require [com.stuartsierra.component :as component]
             [schema.core :as s]
-            [coffee-table.model :as m :refer [Visit]]
+            [coffee-table.model :as m :refer [Visit User]]
             [coffee-table.db.visits :as dbv]
+            [coffee-table.db.users :as dbu]
             [clojure.java.jdbc :as jdbc])
   (:import [java.sql PreparedStatement]))
 
@@ -60,6 +61,11 @@
 (s/defn new-database
   []
   (map->Database {}))
+
+(s/defn user :- User
+  [component
+   username :- s/Str]
+  (dbu/user-by-username (:spec component) {:username username}))
 
 (s/defn visits :- [DBVisit]
   [component]

@@ -3,7 +3,7 @@
             [yada.yada :as yada]
             [yada.resources.classpath-resource :refer [new-classpath-resource]]
             [com.stuartsierra.component :as component]
-            [coffee-table.resources :refer [new-visit-node-resource new-visit-index-resource]]))
+            [coffee-table.resources :as r :refer [new-visit-node-resource new-visit-index-resource]]))
 
 (defn routes
   "Create URI route structure for our application."
@@ -11,6 +11,7 @@
   [""
    [["/visits" [["" (new-visit-index-resource db)]
                 [["/" :id] (new-visit-node-resource db)]]]
+    ["/login" (r/new-login-resource db)]
     [true (yada/as-resource nil)]]])
 
 (s/defrecord WebServer [db]

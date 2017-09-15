@@ -3,6 +3,13 @@
             [schema.coerce :as coerce]
             #?(:cljs [cljs-time.coerce :as dcoerce])))
 
+(s/defschema User
+  "Coffee Table User accounts"
+  {:id s/Int
+   :username s/Str
+   :password s/Str
+   :is_admin s/Bool})
+
 (s/defschema Rating
   "Numeric score for various visit factors"
   (s/enum 1 2 3 4 5))

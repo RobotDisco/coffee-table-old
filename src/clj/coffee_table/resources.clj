@@ -1,9 +1,39 @@
 (ns coffee-table.resources
-  (:require [clojure.pprint :as pprint]
+  (:require [buddy.sign.jwt :as jwt]
+            [buddy.hashers :as bhash]
             [coffee-table.component.database :as dbc]
             [coffee-table.model :refer [Visit]]
-            [yada.yada :as yada])
+            [yada.yada :as yada]
+            [schema.core :as s]
+            [hiccup.core :refer [html]])
   (:import java.net.URI))
+
+(defn valid-user [db username password]
+  (if-let [user (dbc/user db username)]
+    (bhash/check password (:password user))
+    false))
+
+(defn new-login-resource [db]
+  (yada/resource
+   {:methods
+    {:post
+     {:consumes "application/x-www-form-urlencoded"
+      :parameters {:form {:user s/Str :password s/Str}}
+      :response (fn [ctx]
+                  (let [{:keys [user password]} (get-in ctx [:parameters :form])]
+                    (if (valid-user db user password)
+                      (assoc (:response ctx)
+                             :cookies {"session"
+                                       {:value (jwt/sign {:user user}
+                                                         "lp0fTc2JMtx8")}})
+                      "Login failed!!!")))}
+     :get
+     {:produces "text/html"
+      :response (html
+                 [:form {:method :post}
+                  [:input {:name "user" :type :text}]
+                  [:input {:name "password" :type :password}]
+                  [:input {:type :submit}]])}}}))
 
 (defn new-visit-index-resource [db]
   (yada/resource
