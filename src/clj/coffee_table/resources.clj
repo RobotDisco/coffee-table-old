@@ -5,35 +5,36 @@
             [coffee-table.model :refer [Visit]]
             [yada.yada :as yada]
             [schema.core :as s]
-            [hiccup.core :refer [html]])
+            [hiccup.core :refer [html]]
+            [clj-time.core :as time])
   (:import java.net.URI))
 
 (defn valid-user [db username password]
-  (if-let [user (dbc/user db username)]
-    (bhash/check password (:password user))
-    false))
+  (let [unauthenticated [false {:error "Invalid username or password"}]]
+    (if-let [user (dbc/private-user db username)]
+      (if (bhash/check password (:password user))
+        [true (dissoc user :password)]
+        unauthenticated)
+      unauthenticated)))
 
 (defn new-login-resource [db]
   (yada/resource
-   {:methods
+   {:access-control {:allow-origin "http://localhost:3449"
+                     :allow-methods [:head :options :post]
+                     :allow-headers ["Content-Type"]}
+    :methods
     {:post
-     {:consumes "application/x-www-form-urlencoded"
-      :parameters {:form {:user s/Str :password s/Str}}
+     {:consumes "application/json"
+      :produces "application/json"
+      :parameters {:body {:user s/Str :password s/Str}}
       :response (fn [ctx]
-                  (let [{:keys [user password]} (get-in ctx [:parameters :form])]
-                    (if (valid-user db user password)
-                      (assoc (:response ctx)
-                             :cookies {"session"
-                                       {:value (jwt/sign {:user user}
-                                                         "lp0fTc2JMtx8")}})
-                      "Login failed!!!")))}
-     :get
-     {:produces "text/html"
-      :response (html
-                 [:form {:method :post}
-                  [:input {:name "user" :type :text}]
-                  [:input {:name "password" :type :password}]
-                  [:input {:type :submit}]])}}}))
+                  (let [{:keys [user password]} (get-in ctx [:parameters :body])
+                        [success payload] (valid-user db user password)]
+                    (if success
+                      (merge payload
+                             {:token (jwt/sign (assoc payload :exp (time/plus (time/now) (time/minutes 10)))
+                                               "lp0fTc2JMtx8")})
+                      payload)))}}}))
 
 (defn new-visit-index-resource [db]
   (yada/resource

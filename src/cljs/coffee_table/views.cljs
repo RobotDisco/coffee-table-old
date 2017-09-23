@@ -1,7 +1,9 @@
 (ns coffee-table.views
   (:require cljsjs.semantic-ui-react
             goog.object
+            [coffee-table.login :as llogin]
             [re-frame.core :as rf]
+            [reagent.core :as r]
             [cljs-time.format :as time]
             [cljs-time.coerce :as tcoerce]))
 
@@ -115,8 +117,26 @@
          "Add"
          "Save")]]]))
 
+
+(defn login []
+  (let [state (r/atom {:username ""
+                       :password ""})
+        on-blur (fn [key e]
+                  (swap! state assoc key (-> e .-target .-value)))
+        on-submit (fn [e]
+                    (let [{:keys [username password]} @state]
+                      (llogin/login username password)))]
+    (fn []
+      [:> container
+       [:> header {:as "h1"} "Log the heck in"]
+       [:> form {:on-submit on-submit}
+        [:> field {:label "User Name" :name "username" :control "input" :on-blur (partial on-blur :username)}]
+        [:> field {:label "Password" :name "password" :control "input" :type "password" :on-blur (partial on-blur :password)}]
+        [:> button {:positive true :role "submit"} "Login"]]])))
+
 (defn app []
-  (let [mode @(rf/subscribe [:app/mode])]
+  [login]
+  #_ (let [mode @(rf/subscribe [:app/mode])]
     [:> container {}
      [:> header {:as "h1" :text-align "center"} "Coffee Table"]
      (condp = mode

@@ -41,13 +41,14 @@
                  ;; Re-frame (Redux for Clojurescript)
                  [re-frame "0.10.1"]
                  ;; Re-frame AJAX effect handlers
-                 [cljs-ajax "0.6.0"]
+                 [cljs-ajax "0.7.2"]
                  [day8.re-frame/http-fx "0.1.4"]
 
                  ;; Semantic UI (CSS Framework)
                  [cljsjs/semantic-ui-react "0.71.0-0" :exclusions [cljsjs/react cljsjs/react-dom]]
 
                  ;; Time Processing libraries
+                 [clj-time "0.14.0"]
                  [com.andrewmcveigh/cljs-time "0.5.1"]]
   :plugins [[lein-figwheel "0.5.13"]
             [lein-cljsbuild "1.1.5"]
