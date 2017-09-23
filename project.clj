@@ -19,7 +19,7 @@
                  [aleph "0.4.3"]
 
                  ;; API: REST framework
-                 [yada "1.2.8"]
+                 [yada "1.2.9"]
 
                  ;; JSON parsing
                  [cheshire "5.8.0"]
@@ -27,7 +27,7 @@
                  ;; DB: SQL, migrations
                  [com.layerware/hugsql "0.4.7"]
                  [org.postgresql/postgresql "42.1.4"]
-                 [migratus "0.9.9"]
+                 [migratus "1.0.0"]
                  [org.slf4j/slf4j-log4j12 "1.7.25"]
 
                  ;; Auth, JWT
@@ -36,16 +36,17 @@
                  [buddy/buddy-hashers "1.3.0"]
 
                  ;; Reagent/Re-frame state inspector
-                 [re-frisk "0.4.5"]
+                 [re-frisk "0.5.0"]
 
                  ;; Re-frame (Redux for Clojurescript)
                  [re-frame "0.10.1"]
+                 [reagent "0.6.1"]
                  ;; Re-frame AJAX effect handlers
                  [cljs-ajax "0.7.2"]
                  [day8.re-frame/http-fx "0.1.4"]
 
                  ;; Semantic UI (CSS Framework)
-                 [cljsjs/semantic-ui-react "0.71.0-0" :exclusions [cljsjs/react cljsjs/react-dom]]
+                 [cljsjs/semantic-ui-react "0.73.0-0" :exclusions [cljsjs/react cljsjs/react-dom]]
 
                  ;; Time Processing libraries
                  [clj-time "0.14.0"]
