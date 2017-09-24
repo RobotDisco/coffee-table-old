@@ -12,6 +12,16 @@
    (:app/mode db)))
 
 (reg-sub
+ :app/error
+ (fn [db _]
+   (:app/error db)))
+
+(reg-sub
+ :app/user
+ (fn [db _]
+   (:app/user db)))
+
+(reg-sub
  :buffer/visit
  (fn [db _]
    (:buffer/visit db)))

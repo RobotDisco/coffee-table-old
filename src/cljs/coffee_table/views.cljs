@@ -123,9 +123,7 @@
                        :password ""})
         on-blur (fn [key e]
                   (swap! state assoc key (-> e .-target .-value)))
-        on-submit (fn [e]
-                    (let [{:keys [username password]} @state]
-                      (llogin/login username password)))]
+        on-submit #(rf/dispatch [:login-attempt (:username @state) (:password @state)])]
     (fn []
       [:> container
        [:> header {:as "h1"} "Log the heck in"]
@@ -134,13 +132,24 @@
         [:> field {:label "Password" :name "password" :control "input" :type "password" :on-blur (partial on-blur :password)}]
         [:> button {:positive true :role "submit"} "Login"]]])))
 
+(defn error-message []
+  (let [error @(rf/subscribe [:app/error])]
+    (if (nil? error)
+      nil
+      [:> segment {:color :red :inverted true :raised true} error])))
+
+(defn valid-user-login [user]
+  (not (nil? user)))
+
 (defn app []
-  [login]
-  #_ (let [mode @(rf/subscribe [:app/mode])]
+  (let [mode @(rf/subscribe [:app/mode])
+        user @(rf/subscribe [:app/user])]
     [:> container {}
      [:> header {:as "h1" :text-align "center"} "Coffee Table"]
-     (condp = mode
-       :list [:div [summaries]
+     [error-message]
+     (cond
+       (not (valid-user-login user)) [login]
+       (= :list mode) [:div [summaries]
               [:> button {:on-click #(rf/dispatch [:add-visit])} "Add Visit"]]
-       :view [visit]
-       nil)]))
+       (= :view mode) [visit]
+       true nil)]))

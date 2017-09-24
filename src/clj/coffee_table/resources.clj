@@ -13,9 +13,22 @@
   (let [unauthenticated [false {:error "Invalid username or password"}]]
     (if-let [user (dbc/private-user db username)]
       (if (bhash/check password (:password user))
-        [true (dissoc user :password)]
+        [true (-> user
+                  (assoc :roles #{:user})
+                  (dissoc :password))]
         unauthenticated)
       unauthenticated)))
+
+#_ (defmethod yada.security/verify :jwt [ctx scheme _]
+  #_ (try
+    (let [auth (get-in ctx [:request :headers "authorization"])
+          #_ cred #_ (jwt/unsign (last (re-find #"^Bearer (.*)$" auth)))]
+      #_ cred auth)
+    (catch Exception e nil))
+     nil)
+
+(defmethod yada.security/verify :jwt [ctx schema]
+  nil)
 
 (defn new-login-resource [db]
   (yada/resource
@@ -26,21 +39,27 @@
     {:post
      {:consumes "application/json"
       :produces "application/json"
-      :parameters {:body {:user s/Str :password s/Str}}
+      :parameters {:body {:username s/Str :password s/Str}}
       :response (fn [ctx]
-                  (let [{:keys [user password]} (get-in ctx [:parameters :body])
-                        [success payload] (valid-user db user password)]
+                  (let [{:keys [username password]} (get-in ctx [:parameters :body])
+                        [success payload] (valid-user db username password)
+                        response (:response ctx)]
                     (if success
                       (merge payload
                              {:token (jwt/sign (assoc payload :exp (time/plus (time/now) (time/minutes 10)))
                                                "lp0fTc2JMtx8")})
-                      payload)))}}}))
+                      (-> response
+                          (assoc :status 401)
+                          (assoc :body payload)))))}}}))
 
 (defn new-visit-index-resource [db]
   (yada/resource
    {:access-control {:allow-origin "http://localhost:3449"
                      :allow-methods [:options :head :get :post]
-                     :allow-headers ["Content-Type"]}
+                     :allow-headers ["Content-Type"]
+                     :scheme :jwt
+                     :authorization {:methods {:get :user
+                                               :post :user}}}
     :description "Café Visit index"
     :consumes #{"application/json"}
     :produces #{"application/json"}
@@ -56,7 +75,11 @@
   (yada/resource
    {:access-control {:allow-origin "http://localhost:3449"
                      :allow-methods [:options :head :get :put :delete]
-                     :allow-headers ["Content-Type"]}
+                     :allow-headers ["Content-Type"]
+                     :scheme :jwt
+                     :authorization {:methods {:get :user
+                                               :put :user
+                                               :delete :user}}}
     :description "Café Visit entries"
     :consumes #{"application/json"}
     :produces #{"application/json"}
