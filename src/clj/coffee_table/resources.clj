@@ -7,7 +7,8 @@
             [schema.core :as s]
             [hiccup.core :refer [html]]
             [clj-time.core :as time])
-  (:import java.net.URI))
+  (:import [java.net URI]
+           [clojure.lang ExceptionInfo]))
 
 (defn valid-user [db username password]
   (let [unauthenticated [false {:error "Invalid username or password"}]]
@@ -19,16 +20,15 @@
         unauthenticated)
       unauthenticated)))
 
-#_ (defmethod yada.security/verify :jwt [ctx scheme _]
-  #_ (try
-    (let [auth (get-in ctx [:request :headers "authorization"])
-          #_ cred #_ (jwt/unsign (last (re-find #"^Bearer (.*)$" auth)))]
-      #_ cred auth)
-    (catch Exception e nil))
-     nil)
-
-(defmethod yada.security/verify :jwt [ctx schema]
-  nil)
+(defmethod yada.security/verify :jwt [ctx scheme]
+  (try
+    (let [auth (get-in ctx [:request :headers "Authorization"])
+          cred (jwt/unsign (last (re-find #"^Bearer (.*)$" auth)) "lp0fTc2JMtx8")]
+      cred)
+    (catch ExceptionInfo e
+      (if-not (= (ex-data e)
+                 {:type :validation :cause :signature})
+        (throw e)))))
 
 (defn new-login-resource [db]
   (yada/resource
@@ -56,7 +56,7 @@
   (yada/resource
    {:access-control {:allow-origin "http://localhost:3449"
                      :allow-methods [:options :head :get :post]
-                     :allow-headers ["Content-Type"]
+                     :allow-headers ["Content-Type" "Authorization"]
                      :scheme :jwt
                      :authorization {:methods {:get :user
                                                :post :user}}}
@@ -75,7 +75,7 @@
   (yada/resource
    {:access-control {:allow-origin "http://localhost:3449"
                      :allow-methods [:options :head :get :put :delete]
-                     :allow-headers ["Content-Type"]
+                     :allow-headers ["Content-Type" "Authorization"]
                      :scheme :jwt
                      :authorization {:methods {:get :user
                                                :put :user

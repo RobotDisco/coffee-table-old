@@ -41,6 +41,8 @@
    {:db (assoc db :visits/loading? true)
     :http-xhrio {:method :get
                  :uri "http://localhost:8080/visits"
+                 :headers {:Authorization (str "Bearer" " "
+                                               (get-in db [:app/user :token]))}
                  :response-format (ajax/json-response-format {:keywords? true})
                  :on-success [:load-all-visits]
                  :on-failure [:bad-response]}}))
