@@ -1,8 +1,9 @@
 (ns coffee-table.component.database
   (:require [com.stuartsierra.component :as component]
             [schema.core :as s]
-            [coffee-table.model :as m :refer [Visit]]
+            [coffee-table.model :as m]
             [coffee-table.db.visits :as dbv]
+            [coffee-table.db.users :as dbu]
             [clojure.java.jdbc :as jdbc])
   (:import [java.sql PreparedStatement]))
 
@@ -29,7 +30,7 @@
 
 (def DBVisit
   "Schema for visit that came from a DB"
-  (s/conditional #(contains? % :id) Visit))
+  (s/conditional #(contains? % :id) m/Visit))
 
 (def DBVisitResult
   (s/maybe DBVisit))
@@ -61,6 +62,24 @@
   []
   (map->Database {}))
 
+(s/defn private-user :- (s/maybe m/PrivateUser)
+  [component
+   username :- s/Str]
+  (if-let [puser (dbu/private-user-by-username
+                  (:spec component)
+                  {:username username})]
+    (assoc puser :roles #{:user})))
+
+(s/defn user :- (s/maybe m/PublicUser)
+  [component
+   username :- s/Str]
+  (if-let [puser (private-user component username)]
+    (dissoc puser :password)))
+
+(s/defn users :- [m/PublicUser]
+  [component]
+  (dbu/all-users (:spec component)))
+
 (s/defn visits :- [DBVisit]
   [component]
   (mapv db->visit (dbv/all-visits (:spec component))))
@@ -73,7 +92,7 @@
 
 (s/defn add-visit :- DBVisitResult
   [component
-   v :- Visit]
+   v :- m/Visit]
   (let [{:keys [id]} (first (dbv/insert-visit (:spec component) v))
         res (visit component id)]
     res))
@@ -86,7 +105,7 @@
 
 (s/defn update-visit :- DBVisitResult
   [component
-   update-visit :- Visit]
+   update-visit :- m/Visit]
   (let [update-idx (m/visit-id update-visit)]
     (when-not (nil? (visit component update-idx))
       (dbv/update-visit-by-id (:spec component) update-visit)

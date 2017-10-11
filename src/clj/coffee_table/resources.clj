@@ -1,15 +1,64 @@
 (ns coffee-table.resources
-  (:require [clojure.pprint :as pprint]
+  (:require [buddy.sign.jwt :as jwt]
+            [buddy.hashers :as bhash]
             [coffee-table.component.database :as dbc]
-            [coffee-table.model :refer [Visit]]
-            [yada.yada :as yada])
-  (:import java.net.URI))
+            [coffee-table.model :refer [Visit] :as m]
+            [yada.yada :as yada]
+            [schema.core :as s]
+            [hiccup.core :refer [html]]
+            [clj-time.core :as time])
+  (:import [java.net URI]
+           [clojure.lang ExceptionInfo]))
+
+(defn valid-user [db username password]
+  (let [unauthenticated [false {:error "Invalid username or password"}]]
+    (if-let [user (dbc/private-user db username)]
+      (if (bhash/check password (:password user))
+        [true (-> user
+                  (dissoc :password))]
+        unauthenticated)
+      unauthenticated)))
+
+(defmethod yada.security/verify :jwt [ctx scheme]
+  (try
+    (let [auth (get-in ctx [:request :headers "Authorization"])
+          cred (jwt/unsign (last (re-find #"^Bearer (.*)$" auth)) "lp0fTc2JMtx8")]
+      (m/JSON-User cred))
+    (catch ExceptionInfo e
+      (if-not (= (ex-data e)
+                 {:type :validation :cause :signature})
+        (throw e)))))
+
+(defn new-login-resource [db]
+  (yada/resource
+   {:access-control {:allow-origin "http://localhost:3449"
+                     :allow-methods [:head :options :post]
+                     :allow-headers ["Content-Type"]}
+    :methods
+    {:post
+     {:consumes "application/json"
+      :produces "application/json"
+      :parameters {:body {:username s/Str :password s/Str}}
+      :response (fn [ctx]
+                  (let [{:keys [username password]} (get-in ctx [:parameters :body])
+                        [success payload] (valid-user db username password)
+                        response (:response ctx)]
+                    (if success
+                      (merge payload
+                             {:token (jwt/sign (assoc payload :exp (time/plus (time/now) (time/minutes 10)))
+                                               "lp0fTc2JMtx8")})
+                      (-> response
+                          (assoc :status 401)
+                          (assoc :body payload)))))}}}))
 
 (defn new-visit-index-resource [db]
   (yada/resource
    {:access-control {:allow-origin "http://localhost:3449"
                      :allow-methods [:options :head :get :post]
-                     :allow-headers ["Content-Type"]}
+                     :allow-headers ["Content-Type" "Authorization"]
+                     :scheme :jwt
+                     :authorization {:methods {:get :user
+                                               :post :user}}}
     :description "Café Visit index"
     :consumes #{"application/json"}
     :produces #{"application/json"}
@@ -25,7 +74,11 @@
   (yada/resource
    {:access-control {:allow-origin "http://localhost:3449"
                      :allow-methods [:options :head :get :put :delete]
-                     :allow-headers ["Content-Type"]}
+                     :allow-headers ["Content-Type" "Authorization"]
+                     :scheme :jwt
+                     :authorization {:methods {:get :user
+                                               :put :user
+                                               :delete :user}}}
     :description "Café Visit entries"
     :consumes #{"application/json"}
     :produces #{"application/json"}

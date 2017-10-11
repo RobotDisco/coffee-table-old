@@ -3,6 +3,19 @@
             [schema.coerce :as coerce]
             #?(:cljs [cljs-time.coerce :as dcoerce])))
 
+(s/defschema PublicUser
+  "Coffee Table Users (password removed for security reasons)"
+  {:id s/Int
+   :username s/Str
+   :roles #{(s/enum :user)}
+   :is_admin s/Bool
+   (s/optional-key :exp) s/Int})
+
+(s/defschema PrivateUser
+  "Coffee Table User accounts"
+  (merge PublicUser
+         {:password s/Str}))
+
 (s/defschema Rating
   "Numeric score for various visit factors"
   (s/enum 1 2 3 4 5))
@@ -59,6 +72,14 @@
            (-> visit
                (update :date dcoerce/to-string)
                clj->js)))
+
+(defn json-user-coercion-matcher
+  [schema]
+  (or ({#{(s/enum :user)} (coerce/safe #(set (mapv keyword %)))} schema)
+      (coerce/json-coercion-matcher schema)))
+
+(def JSON-User
+  (coerce/coercer PublicUser json-user-coercion-matcher))
 
 (s/defschema Summary
   "Schema for coffee table summaries"

@@ -41,6 +41,8 @@
    {:db (assoc db :visits/loading? true)
     :http-xhrio {:method :get
                  :uri "http://localhost:8080/visits"
+                 :headers {:Authorization (str "Bearer" " "
+                                               (get-in db [:app/user :token]))}
                  :response-format (ajax/json-response-format {:keywords? true})
                  :on-success [:load-all-visits]
                  :on-failure [:bad-response]}}))
@@ -95,11 +97,31 @@
                    :on-success [:fetch-all-visits]
                    :on-failure [:bad-response]}})))
 
+(rf/reg-event-fx
+ :login-attempt
+ #_ coffee-table-interceptors
+ (fn [_ [_ username password]]
+   {:http-xhrio {:method :post
+                 :uri "http://localhost:8080/login"
+                 :params {:username username :password password}
+                 :format (ajax/json-request-format)
+                 :response-format (ajax/json-response-format {:keywords? true})
+                 :on-failure [:bad-response]
+                 :on-success [:login-successful]}}))
+
+(rf/reg-event-fx
+ :login-successful
+ #_ coffee-table-interceptors
+ (fn [{:keys [db]} [_ response]]
+   {:db (-> db
+            (assoc :app/user response))
+    :dispatch [:fetch-all-visits]}))
+
 (rf/reg-event-db
  :bad-response
  #_ coffee-table-interceptors
- (fn [db response]
-   (assoc db :app/error response)))
+ (fn [db [_ response]]
+   (assoc db :app/error (get-in response [:response :error]))))
 
 (rf/reg-event-db
  :update-buffer
