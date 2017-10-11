@@ -2,7 +2,7 @@
   (:require [buddy.sign.jwt :as jwt]
             [buddy.hashers :as bhash]
             [coffee-table.component.database :as dbc]
-            [coffee-table.model :refer [Visit]]
+            [coffee-table.model :refer [Visit] :as m]
             [yada.yada :as yada]
             [schema.core :as s]
             [hiccup.core :refer [html]]
@@ -15,7 +15,6 @@
     (if-let [user (dbc/private-user db username)]
       (if (bhash/check password (:password user))
         [true (-> user
-                  (assoc :roles #{:user})
                   (dissoc :password))]
         unauthenticated)
       unauthenticated)))
@@ -24,7 +23,7 @@
   (try
     (let [auth (get-in ctx [:request :headers "Authorization"])
           cred (jwt/unsign (last (re-find #"^Bearer (.*)$" auth)) "lp0fTc2JMtx8")]
-      cred)
+      (m/JSON-User cred))
     (catch ExceptionInfo e
       (if-not (= (ex-data e)
                  {:type :validation :cause :signature})

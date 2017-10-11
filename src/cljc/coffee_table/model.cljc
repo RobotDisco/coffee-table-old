@@ -7,7 +7,9 @@
   "Coffee Table Users (password removed for security reasons)"
   {:id s/Int
    :username s/Str
-   :is_admin s/Bool})
+   :roles #{(s/enum :user)}
+   :is_admin s/Bool
+   (s/optional-key :exp) s/Int})
 
 (s/defschema PrivateUser
   "Coffee Table User accounts"
@@ -70,6 +72,14 @@
            (-> visit
                (update :date dcoerce/to-string)
                clj->js)))
+
+(defn json-user-coercion-matcher
+  [schema]
+  (or ({#{(s/enum :user)} (coerce/safe #(set (mapv keyword %)))} schema)
+      (coerce/json-coercion-matcher schema)))
+
+(def JSON-User
+  (coerce/coercer PublicUser json-user-coercion-matcher))
 
 (s/defschema Summary
   "Schema for coffee table summaries"

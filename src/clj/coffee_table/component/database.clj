@@ -65,7 +65,10 @@
 (s/defn private-user :- (s/maybe m/PrivateUser)
   [component
    username :- s/Str]
-  (dbu/private-user-by-username (:spec component) {:username username}))
+  (if-let [puser (dbu/private-user-by-username
+                  (:spec component)
+                  {:username username})]
+    (assoc puser :roles #{:user})))
 
 (s/defn user :- (s/maybe m/PublicUser)
   [component
