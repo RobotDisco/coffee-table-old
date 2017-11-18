@@ -10,6 +10,9 @@
   (:import [java.net URI]
            [clojure.lang ExceptionInfo]))
 
+(defn stupid-logger [& rest]
+  (print rest))
+
 (defn valid-user [db username password]
   (let [unauthenticated [false {:error "Invalid username or password"}]]
     (if-let [user (dbc/private-user db username)]
@@ -22,8 +25,10 @@
 (defmethod yada.security/verify :jwt [ctx scheme]
   (try
     (let [auth (get-in ctx [:request :headers "Authorization"])
-          cred (jwt/unsign (last (re-find #"^Bearer (.*)$" auth)) "lp0fTc2JMtx8")]
-      (m/JSON-User cred))
+          cred (if (nil? auth)
+                 nil
+                 (m/JSON-User (jwt/unsign (last (or (re-find #"^Bearer (.*)$" auth))) "lp0fTc2JMtx8")))]
+      cred)
     (catch ExceptionInfo e
       (if-not (= (ex-data e)
                  {:type :validation :cause :signature})
@@ -34,8 +39,7 @@
    {:access-control {:allow-origin "http://localhost:3449"
                      :allow-methods [:head :options :post]
                      :allow-headers ["Content-Type"]}
-    :logger (fn [& rest]
-              (print rest))
+    :logger stupid-logger
     :methods
     {:post
      {:consumes "application/json"
@@ -61,6 +65,7 @@
                      :scheme :jwt
                      :authorization {:methods {:get :user
                                                :post :user}}}
+    :logger stupid-logger
     :description "Café Visit index"
     :consumes #{"application/json"}
     :produces #{"application/json"}
@@ -81,6 +86,7 @@
                      :authorization {:methods {:get :user
                                                :put :user
                                                :delete :user}}}
+    :logger stupid-logger
     :description "Café Visit entries"
     :consumes #{"application/json"}
     :produces #{"application/json"}

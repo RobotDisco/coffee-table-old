@@ -27,7 +27,6 @@
 (def coffee-table-interceptors [check-schema-interceptor
                                 (when ^boolean js/goog.DEBUG rf/debug)])
 
-
 (rf/reg-event-db
  :initialize-db
  #_ coffee-table-interceptors
@@ -41,8 +40,7 @@
    {:db (assoc db :visits/loading? true)
     :http-xhrio {:method :get
                  :uri "http://localhost:8080/visits"
-                 :headers {:Authorization (str "Bearer" " "
-                                               (get-in db [:app/user :token]))}
+                 :headers {:Authorization (str "Bearer " (get-in db [:app/user :token]))}
                  :response-format (ajax/json-response-format {:keywords? true})
                  :on-success [:load-all-visits]
                  :on-failure [:bad-response]}}))
@@ -89,6 +87,7 @@
                    :uri (if new-visit
                           base-url
                           (gstring/format "http://localhost:8080/visits/%d" visit-id))
+                   :headers {:Authorization (str "Bearer " (get-in db [:app/user :token]))}
                    :params (-> db
                                :buffer/visit
                                m/Visit-JSON)
