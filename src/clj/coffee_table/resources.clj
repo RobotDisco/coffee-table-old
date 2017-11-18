@@ -34,6 +34,8 @@
    {:access-control {:allow-origin "http://localhost:3449"
                      :allow-methods [:head :options :post]
                      :allow-headers ["Content-Type"]}
+    :logger (fn [& rest]
+              (print rest))
     :methods
     {:post
      {:consumes "application/json"

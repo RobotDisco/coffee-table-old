@@ -68,7 +68,9 @@
   (if-let [puser (dbu/private-user-by-username
                   (:spec component)
                   {:username username})]
-    (assoc puser :roles #{:user})))
+    (-> puser
+        (update :username str)
+        (assoc :roles (if (:is_admin puser) #{:user :admin} #{:user})))))
 
 (s/defn user :- (s/maybe m/PublicUser)
   [component

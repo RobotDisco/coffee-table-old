@@ -7,7 +7,7 @@
   "Coffee Table Users (password removed for security reasons)"
   {:id s/Int
    :username s/Str
-   :roles #{(s/enum :user)}
+   :roles #{(s/enum :user :admin)}
    :is_admin s/Bool
    (s/optional-key :exp) s/Int})
 
