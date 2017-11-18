@@ -8,3 +8,14 @@ SELECT * FROM users WHERE username = :username
 -- :name all-users :? :*
 -- :doc Get all app users
 SELECT id, username, is_admin FROM users
+
+-- :name insert-user :<								xb!
+insert into users (
+       username,
+       password,
+       is_admin
+) VALUES (
+  :username,
+  :password,
+  :is_admin
+) returning id

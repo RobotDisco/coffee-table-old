@@ -3,6 +3,8 @@
             [clojure.pprint :refer [pprint]]
             [reloaded.repl :refer [system]]
             [coffee-table.system :refer [dev-system]]
+            [coffee-table.db.users :as dbu]
+            [buddy.hashers :as bhash]
             [figwheel-sidecar.system :as figsys]))
 
 (s/set-fn-validation! true)
@@ -19,3 +21,9 @@
 
 (defn cljs-repl []
   (figsys/cljs-repl (:figwheel system)))
+
+(defn create-admin-user []
+  (dbu/insert-user (get-in reloaded.repl/system [:db :spec])
+                   {:username "admin"
+                    :password (bhash/derive "password")
+                    :is_admin true}))
