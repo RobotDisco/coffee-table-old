@@ -7,16 +7,16 @@
   :local-repo ".m2"
   :dependencies [;; Core Language(s)
                  [org.clojure/clojure "1.8.0"]
-                 [org.clojure/clojurescript "1.9.908"]
+                 [org.clojure/clojurescript "1.9.946"]
 
                  ;; Model schema/verification
-                 [prismatic/schema "1.1.6"]
+                 [prismatic/schema "1.1.7"]
 
                  ;; Backend state management
                  [com.stuartsierra/component "0.3.2"]
 
                  ;; Backend HTTP server
-                 [aleph "0.4.3"]
+                 [aleph "0.4.4"]
 
                  ;; API: REST framework
                  [yada "1.2.9"]
@@ -25,9 +25,9 @@
                  [cheshire "5.8.0"]
 
                  ;; DB: SQL, migrations
-                 [com.layerware/hugsql "0.4.7"]
+                 [com.layerware/hugsql "0.4.8"]
                  [org.postgresql/postgresql "42.1.4"]
-                 [migratus "1.0.0"]
+                 [migratus "1.0.1"]
                  [org.slf4j/slf4j-log4j12 "1.7.25"]
 
                  ;; Auth, JWT
@@ -36,36 +36,35 @@
                  [buddy/buddy-hashers "1.3.0"]
 
                  ;; Reagent/Re-frame state inspector
-                 [re-frisk "0.5.0"]
+                 [re-frisk "0.5.2"]
 
                  ;; Re-frame (Redux for Clojurescript)
-                 [re-frame "0.10.1"]
-                 [reagent "0.6.1"]
+                 [re-frame "0.10.2"]
                  ;; Re-frame AJAX effect handlers
-                 [cljs-ajax "0.7.2"]
+                 [cljs-ajax "0.7.3"]
                  [day8.re-frame/http-fx "0.1.4"]
 
                  ;; Semantic UI (CSS Framework)
-                 [cljsjs/semantic-ui-react "0.73.0-0" :exclusions [cljsjs/react cljsjs/react-dom]]
+                 [cljsjs/semantic-ui-react "0.76.0-0" :exclusions [cljsjs/react cljsjs/react-dom]]
 
                  ;; Time Processing libraries
-                 [clj-time "0.14.0"]
-                 [com.andrewmcveigh/cljs-time "0.5.1"]]
+                 [clj-time "0.14.2"]
+                 [com.andrewmcveigh/cljs-time "0.5.2"]]
   :plugins [[lein-figwheel "0.5.13"]
             [lein-cljsbuild "1.1.5"]
             [refactor-nrepl "2.2.0"]
             [migratus-lein "0.5.0"]]
   :profiles {:dev {:dependencies [;; Component/namespace mgmt
-                                  [reloaded.repl "0.2.3"]
+                                  [reloaded.repl "0.2.4"]
                                   ;; Testing mocks
-                                  [ring/ring-mock "0.3.1"]
+                                  [ring/ring-mock "0.3.2"]
                                   ;; CLJS interactive prototype visualizer
-                                  [devcards "0.2.3" :exclusions [cljsjs/react cljsjs/react-dom]]
-                                  ;; CLJS REPL
+                                  [devcards "0.2.4"]
+                                  ;; CLJS REfPL
                                   [com.cemerick/piggieback "0.2.2"]
-                                  [figwheel-sidecar "0.5.13"]
+                                  [figwheel-sidecar "0.5.14"]
                                   ;; Chrome DevTools extensions for CLJS
-                                  [binaryage/devtools "0.9.4"]]
+                                  [binaryage/devtools "0.9.7"]]
                    :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
                    :source-paths ["dev"]}}
   :clean-targets ^{:protect false} ["resources/public/js/compiled" "target"]
