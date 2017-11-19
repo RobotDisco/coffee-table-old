@@ -27,6 +27,12 @@
 (def coffee-table-interceptors [check-schema-interceptor
                                 (when ^boolean js/goog.DEBUG rf/debug)])
 
+(def refresh-token
+  (rf/->interceptor
+   :id refresh-token
+   :after (fn [ctx]
+            (assoc-in ctx [:effects :dispatch] [:refresh-token]))))
+
 (rf/reg-event-db
  :initialize-db
  #_ coffee-table-interceptors
@@ -35,7 +41,7 @@
 
 (rf/reg-event-fx
  :fetch-all-visits
- #_ coffee-table-interceptors
+ [refresh-token]
  (fn [{:keys [db]} _]
    {:db (assoc db :visits/loading? true)
     :http-xhrio {:method :get
@@ -78,7 +84,7 @@
 
 (rf/reg-event-fx
  :submit-visit
- #_ coffee-table-interceptors
+ [refresh-token]
  (fn [{:keys [db]} _]
    (let [visit-id (-> db :buffer/visit :id)
          new-visit (nil? visit-id)
@@ -126,3 +132,19 @@
  :update-buffer
  (fn [db [_ key value]]
    (assoc-in db [:buffer/visit key] value)))
+
+(rf/reg-event-fx
+ :refresh-token
+ (fn [{:keys [db]} _]
+   {:http-xhrio {:method :post
+                 :uri "http://localhost:8080/refresh"
+                 :headers {:Authorization (str "Bearer " (get-in db [:app/user :token]))}
+                 :format (ajax/text-request-format)
+                 :response-format (ajax/json-response-format {:keywords? true})
+                 :on-failure [:bad-response]
+                 :on-success [:refresh-successful]}}))
+
+(rf/reg-event-db
+ :refresh-successful
+ (fn [db [_ response]]
+   (assoc db :app/user :token (:token response))))

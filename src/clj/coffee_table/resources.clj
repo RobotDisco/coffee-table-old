@@ -34,6 +34,24 @@
                  {:type :validation :cause :signature})
         (throw e)))))
 
+(defn new-login-refresh []
+  (yada/resource
+   {:access-control {:allow-origin "http://localhost:3449"
+                     :allow-methods [:head :options :post]
+                     :allow-headers ["Content-Type" "Authorization"]
+                     :scheme :jwt
+                     :authorization {:methods {:post :user}}}
+    :logger stupid-logger
+    :methods
+    {:post
+     {:produces "application/json"
+      :response (fn [ctx]
+                  (let [auth-header (get-in ctx [:request :headers "Authorization"])
+                        old-token (last (re-find #"^Bearer (.*)$" auth-header))
+                        old-user (m/JSON-User (jwt/unsign old-token "lp0fTc2JMtx8"))]
+                    (jwt/sign (assoc old-user :exp (time/plus (time/now) (time/hours 1)))
+                              "lp0fTc2JMtx8")))}}}))
+
 (defn new-login-resource [db]
   (yada/resource
    {:access-control {:allow-origin "http://localhost:3449"
@@ -51,7 +69,7 @@
                         response (:response ctx)]
                     (if success
                       (merge payload
-                             {:token (jwt/sign (assoc payload :exp (time/plus (time/now) (time/minutes 10)))
+                             {:token (jwt/sign (assoc payload :exp (time/plus (time/now) (time/hours 1)))
                                                "lp0fTc2JMtx8")})
                       (-> response
                           (assoc :status 401)

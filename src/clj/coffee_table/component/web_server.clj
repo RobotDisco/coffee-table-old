@@ -12,6 +12,7 @@
    [["/visits" [["" (new-visit-index-resource db)]
                 [["/" :id] (new-visit-node-resource db)]]]
     ["/login" (r/new-login-resource db)]
+    ["/refresh" (r/new-login-refresh)]
     [true (yada/as-resource nil)]]])
 
 (s/defrecord WebServer [db]
