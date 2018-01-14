@@ -6,7 +6,7 @@
             :distribution :repo}
   :local-repo ".m2"
   :dependencies [;; Core Language(s)
-                 [org.clojure/clojure "1.8.0"]
+                 [org.clojure/clojure "1.9.0"]
                  [org.clojure/clojurescript "1.9.946"]
 
                  ;; Model schema/verification
@@ -19,7 +19,7 @@
                  [aleph "0.4.4"]
 
                  ;; API: REST framework
-                 [yada "1.2.9"]
+                 [yada "1.2.10"]
 
                  ;; JSON parsing
                  [cheshire "5.8.0"]
@@ -27,7 +27,7 @@
                  ;; DB: SQL, migrations
                  [com.layerware/hugsql "0.4.8"]
                  [org.postgresql/postgresql "42.1.4"]
-                 [migratus "1.0.1"]
+                 [migratus "1.0.3"]
                  [org.slf4j/slf4j-log4j12 "1.7.25"]
 
                  ;; Auth, JWT
@@ -36,7 +36,7 @@
                  [buddy/buddy-hashers "1.3.0"]
 
                  ;; Reagent/Re-frame state inspector
-                 [re-frisk "0.5.2"]
+                 [re-frisk "0.5.3"]
 
                  ;; Re-frame (Redux for Clojurescript)
                  [re-frame "0.10.2"]
@@ -64,7 +64,7 @@
                                   [com.cemerick/piggieback "0.2.2"]
                                   [figwheel-sidecar "0.5.14"]
                                   ;; Chrome DevTools extensions for CLJS
-                                  [binaryage/devtools "0.9.7"]]
+                                  [binaryage/devtools "0.9.8"]]
                    :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
                    :source-paths ["dev"]}}
   :clean-targets ^{:protect false} ["resources/public/js/compiled" "target"]
